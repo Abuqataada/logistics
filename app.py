@@ -5,6 +5,7 @@ from models import User, Booking, Partnership, Address, Payment, TrackingUpdate
 import os
 import secrets
 from datetime import datetime
+import urllib.parse
 
 def create_app():
     app = Flask(__name__)
@@ -257,6 +258,131 @@ def create_app():
                 'address_type': address.address_type
             }
         })
+
+    # Routes for WhatsApp integration
+    @app.route('/whatsapp-dispatch')
+    def whatsapp_dispatch():
+        """Generate WhatsApp URL for dispatch booking"""
+        default_message = "Hello Majesty Xpress Logistics, I'd like to book a dispatch/delivery service."
+        
+        # Get user info if logged in
+        if current_user.is_authenticated:
+            user_message = f"Hello Majesty Xpress, I'm {current_user.first_name or current_user.username}. I'd like to book a dispatch service."
+        else:
+            user_message = default_message
+        
+        # URL encode the message
+        encoded_message = urllib.parse.quote(user_message)
+        
+        # Create WhatsApp URL (use your actual number)
+        whatsapp_number = app.config.get('WHATSAPP_NUMBER', '2348012345678')
+        whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
+        
+        # Redirect to WhatsApp
+        return redirect(whatsapp_url)
+
+    @app.route('/whatsapp-track')
+    def whatsapp_track():
+        """Generate WhatsApp URL for tracking"""
+        default_message = "Hello Majesty Xpress Logistics, I need help tracking my shipment."
+        
+        if current_user.is_authenticated:
+            user_message = f"Hello Majesty Xpress, I'm {current_user.first_name or current_user.username}. I need help tracking my shipment."
+        else:
+            user_message = default_message
+        
+        encoded_message = urllib.parse.quote(user_message)
+        whatsapp_number = app.config.get('WHATSAPP_NUMBER', '2348012345678')
+        whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
+        
+        return redirect(whatsapp_url)
+
+    @app.route('/whatsapp-dispatch-form', methods=['GET', 'POST'])
+    def whatsapp_dispatch_form():
+        """Form to collect dispatch details before WhatsApp redirect"""
+        if request.method == 'POST':
+            # Get form data
+            name = request.form.get('name', '').strip()
+            phone = request.form.get('phone', '').strip()
+            service_type = request.form.get('service_type', 'General Dispatch')
+            pickup_location = request.form.get('pickup_location', '').strip()
+            delivery_location = request.form.get('delivery_location', '').strip()
+            package_details = request.form.get('package_details', '').strip()
+            urgency = request.form.get('urgency', 'Standard')
+            
+            # Auto-fill if user is logged in
+            if current_user.is_authenticated:
+                if not name and current_user.first_name:
+                    name = f"{current_user.first_name} {current_user.last_name or ''}".strip()
+                if not phone and current_user.phone:
+                    phone = current_user.phone
+            
+            # Validate required fields
+            if not name or not phone or not pickup_location or not delivery_location:
+                flash('Please fill in all required fields', 'error')
+                return redirect(url_for('whatsapp_dispatch_form'))
+            
+            # Build WhatsApp message
+            message_lines = [
+                "🔄 *DISPATCH BOOKING REQUEST* 🔄",
+                "",
+                "Hello Majesty Xpress Logistics!",
+                "",
+                "I'd like to book a dispatch service:",
+                "",
+                f"*Name:* {name}",
+                f"*Phone:* {phone}",
+                f"*Service Type:* {service_type}",
+                f"*Urgency:* {urgency}",
+                f"*Pickup Location:* {pickup_location}",
+                f"*Delivery Location:* {delivery_location}",
+            ]
+            
+            if package_details:
+                message_lines.append(f"*Package Details:* {package_details}")
+            
+            message_lines.extend([
+                "",
+                "Please provide:",
+                "1. A quote for this service",
+                "2. Available time slots",
+                "3. Required documentation",
+                "",
+                "Thank you!",
+            ])
+            
+            full_message = "\n".join(message_lines)
+            encoded_message = urllib.parse.quote(full_message)
+            
+            # Get WhatsApp number from config
+            whatsapp_number = app.config.get('WHATSAPP_NUMBER', '2347065894127')
+            whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
+            
+            # Store in session for tracking (optional)
+            session['last_dispatch_name'] = name
+            session['last_dispatch_phone'] = phone
+            
+            flash('Redirecting to WhatsApp...', 'success')
+            return redirect(whatsapp_url)
+        
+        # GET request - show form
+        return render_template('users/whatsapp_dispatch_form.html')
+
+    @app.route('/whatsapp-quote')
+    def whatsapp_quote():
+        """Get a quick quote via WhatsApp"""
+        default_message = "Hello Majesty Xpress Logistics, I'd like to get a quote for a delivery service."
+        
+        if current_user.is_authenticated:
+            user_message = f"Hello Majesty Xpress, I'm {current_user.first_name or current_user.username}. I'd like to get a delivery quote."
+        else:
+            user_message = default_message
+        
+        encoded_message = urllib.parse.quote(user_message)
+        whatsapp_number = app.config.get('WHATSAPP_NUMBER', '2348012345678')
+        whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
+        
+        return redirect(whatsapp_url)
 
     @app.route('/admin-seed')
     def admin_seed():

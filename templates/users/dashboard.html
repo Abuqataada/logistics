@@ -296,6 +296,38 @@
         <p style="color: #7f8c8d;">Here's an overview of your account activity</p>
     </div>
     
+    <!-- Quick Dispatch via WhatsApp -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h3><i class="fab fa-whatsapp"></i> Quick Dispatch via WhatsApp</h3>
+            <p>Book delivery instantly on WhatsApp</p>
+        </div>
+
+        <div class="whatsapp-dispatch-card">
+            <div class="whatsapp-icon">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <div class="whatsapp-content">
+                <h4>Instant Booking on WhatsApp</h4>
+                <p>Book deliveries, get quotes, and track shipments directly on WhatsApp.</p>
+                <div class="whatsapp-features">
+                    <span><i class="fas fa-check-circle"></i> Instant responses</span>
+                    <span><i class="fas fa-check-circle"></i> Photo sharing</span>
+                    <span><i class="fas fa-check-circle"></i> Live updates</span>
+                    <span><i class="fas fa-check-circle"></i> 24/7 support</span>
+                </div>
+            </div>
+            <div class="whatsapp-actions">
+                <a href="{{ url_for('whatsapp_dispatch') }}" class="btn btn-whatsapp" target="_blank">
+                    <i class="fab fa-whatsapp"></i> Book Dispatch
+                </a>
+                <a href="{{ url_for('whatsapp_track') }}" class="btn btn-outline">
+                    <i class="fas fa-search"></i> Track via WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Statistics -->
     <div class="dashboard-stats">
         <div class="stat-card">

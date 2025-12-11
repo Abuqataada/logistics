@@ -28,3 +28,9 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+
+    # WhatsApp configuration
+    WHATSAPP_NUMBER = "2347065894127"
+    WHATSAPP_BUSINESS_NAME = "Majesty Xpress Logistics"
+    WHATSAPP_HOURS = "24/7"
+    WHATSAPP_MESSAGE = "Hello Majesty Xpress, I need assistance with: "
