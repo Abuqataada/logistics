@@ -1,225 +1,805 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Login - Majesty Xpress Logistics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block title %}Login - Majesty Xpress Logistics{% endblock %}
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100%;
+        }
 
-{% block content %}
-<style>
-    .auth-container {
-        max-width: 500px;
-        margin: 0 auto;
-    }
-    
-    .auth-header {
-        text-align: center;
-        padding: 3rem 0;
-        background: linear-gradient(135deg, #3498db, #2c3e50);
-        color: white;
-        border-radius: 10px;
-        margin-bottom: 3rem;
-    }
-    
-    .auth-header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .auth-card {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-    
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #2c3e50;
-        font-weight: 500;
-    }
-    
-    .form-control {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        border: 2px solid #ddd;
-        border-radius: 6px;
-        font-size: 1rem;
-        transition: border-color 0.3s;
-    }
-    
-    .form-control:focus {
-        border-color: #3498db;
-        outline: none;
-    }
-    
-    .login-btn {
-        width: 100%;
-        background: #3498db;
-        color: white;
-        padding: 1rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.3s;
-    }
-    
-    .login-btn:hover {
-        background: #2980b9;
-    }
-    
-    .auth-links {
-        text-align: center;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid #eee;
-    }
-    
-    .auth-links a {
-        color: #3498db;
-        text-decoration: none;
-        margin: 0 0.5rem;
-    }
-    
-    .auth-links a:hover {
-        text-decoration: underline;
-    }
-    
-    .remember-forgot {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-    
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-    }
-    
-    .checkbox-group input {
-        margin-right: 0.5rem;
-    }
-    
-    .forgot-link {
-        color: #3498db;
-        text-decoration: none;
-    }
-    
-    .forgot-link:hover {
-        text-decoration: underline;
-    }
-    
-    .social-login {
-        margin-top: 2rem;
-        text-align: center;
-    }
-    
-    .social-login p {
-        color: #7f8c8d;
-        margin-bottom: 1rem;
-        position: relative;
-    }
-    
-    .social-login p:before,
-    .social-login p:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        width: 45%;
-        height: 1px;
-        background: #ddd;
-    }
-    
-    .social-login p:before {
-        left: 0;
-    }
-    
-    .social-login p:after {
-        right: 0;
-    }
-    
-    .social-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-    
-    .social-btn {
-        padding: 0.8rem 1.5rem;
-        border: 2px solid #ddd;
-        border-radius: 6px;
-        background: white;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 500;
-        transition: all 0.3s;
-    }
-    
-    .social-btn.google:hover {
-        border-color: #DB4437;
-        color: #DB4437;
-    }
-    
-    .social-btn.facebook:hover {
-        border-color: #4267B2;
-        color: #4267B2;
-    }
-</style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
 
-<div class="auth-container">
-    <div class="auth-header">
-        <h1>Welcome Back</h1>
-        <p>Login to your account to manage your shipments</p>
+        /* Background Animation */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .shape1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            top: 10%;
+            left: 5%;
+            animation: float1 20s infinite ease-in-out;
+        }
+
+        .shape2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%);
+            bottom: 15%;
+            right: 10%;
+            animation: float2 25s infinite ease-in-out;
+        }
+
+        .shape3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            top: 50%;
+            left: 5%;
+            animation: float3 30s infinite ease-in-out reverse;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-40px, 40px) rotate(180deg); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            50% { transform: translate(50px, -50px) rotate(90deg) scale(1.2); }
+        }
+
+        /* Logo */
+        .login-logo {
+            text-align: center;
+            padding: 2rem 1rem 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-logo a {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #cdcfd6 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .login-logo i {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Auth Container */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 0 3rem;
+            width: 100%;
+        }
+
+        .auth-wrapper {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Auth Header */
+        .auth-header {
+            text-align: center;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px 16px 0 0;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .auth-header p {
+            color: #4a5568;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Auth Card */
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.75rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            color: #2d3748;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #a0aec0;
+        }
+
+        /* Remember and Forgot */
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .forgot-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .forgot-link:hover {
+            color: #5a6fd8;
+            text-decoration: underline;
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-bottom: 2rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Social Login */
+        .social-login {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .social-divider {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: #718096;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .social-divider::before,
+        .social-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0);
+        }
+
+        .social-divider::after {
+            background: linear-gradient(90deg, #e2e8f0, transparent);
+        }
+
+        .social-divider span {
+            padding: 0 1rem;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 0.9rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            color: #4a5568;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-btn.google:hover {
+            border-color: #DB4437;
+            color: #DB4437;
+        }
+
+        .social-btn.facebook:hover {
+            border-color: #4267B2;
+            color: #4267B2;
+        }
+
+        /* Auth Links */
+        .auth-links {
+            text-align: center;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        .auth-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .auth-links a:hover {
+            color: #5a6fd8;
+            text-decoration: underline;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto 2rem;
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            animation: slideDown 0.4s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .alert i {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.15) !important;
+            color: #047857;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.15) !important;
+            color: #b91c1c;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.15) !important;
+            color: #1e40af;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .auth-wrapper {
+                padding: 0 1rem;
+            }
+
+            .auth-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .auth-header p {
+                font-size: 1rem;
+            }
+
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-btn {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .social-buttons {
+                flex-direction: column;
+            }
+
+            .social-btn {
+                padding: 0.8rem 1.25rem;
+            }
+
+            .remember-forgot {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-logo {
+                padding: 1.5rem 1rem 0.5rem;
+            }
+
+            .login-logo a {
+                font-size: 1.6rem;
+            }
+
+            .auth-header {
+                padding: 1.75rem 1.25rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.6rem;
+            }
+
+            .auth-card {
+                padding: 1.75rem 1.25rem;
+            }
+
+            .form-control {
+                padding: 0.9rem 1rem;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .login-btn:hover,
+            .social-btn:hover,
+            .forgot-link:hover {
+                transform: none;
+            }
+
+            .login-btn:active,
+            .social-btn:active {
+                transform: scale(0.98);
+            }
+
+            .form-control,
+            .login-btn,
+            .social-btn {
+                min-height: 3.25rem;
+            }
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .shape {
+                animation: none !important;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            }
+
+            .auth-header,
+            .auth-card {
+                background: rgba(26, 32, 44, 0.95);
+                color: #e2e8f0;
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .auth-header h1 {
+                background: linear-gradient(135deg, #a3bffa 0%, #d6bcfa 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .auth-header p {
+                color: #cbd5e0;
+            }
+
+            .form-group label {
+                color: #e2e8f0;
+            }
+
+            .form-control {
+                background: rgba(45, 55, 72, 0.7);
+                border-color: rgba(102, 126, 234, 0.3);
+                color: #e2e8f0;
+            }
+
+            .form-control:focus {
+                border-color: #667eea;
+            }
+
+            .form-control::placeholder {
+                color: #a0aec0;
+            }
+
+            .checkbox-group label {
+                color: #cbd5e0;
+            }
+
+            .social-btn {
+                background: rgba(45, 55, 72, 0.7);
+                color: #cbd5e0;
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .auth-links {
+                color: #a0aec0;
+                border-top-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .social-divider {
+                color: #a0aec0;
+            }
+
+            .social-divider::before,
+            .social-divider::after {
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+            }
+
+            .social-divider::after {
+                background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="background-animation">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
     </div>
-    
-    <div class="auth-card">
-        <form method="POST" action="{{ url_for('users.login') }}">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" required>
-            </div>
-            
-            <div class="remember-forgot">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="remember" name="remember">
-                    <label for="remember" style="margin-bottom: 0;">Remember me</label>
-                </div>
-                <a href="#" class="forgot-link">Forgot password?</a>
-            </div>
-            
-            <button type="submit" class="login-btn">
-                <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-            
-            <div class="social-login">
-                <p>Or login with</p>
-                <div class="social-buttons">
-                    <button type="button" class="social-btn google">
-                        <i class="fab fa-google"></i> Google
-                    </button>
-                    <button type="button" class="social-btn facebook">
-                        <i class="fab fa-facebook-f"></i> Facebook
-                    </button>
-                </div>
-            </div>
-            
-            <div class="auth-links">
-                Don't have an account? <a href="{{ url_for('users.register') }}">Register here</a>
-            </div>
-        </form>
+
+    <!-- Logo -->
+    <div class="login-logo">
+        <a href="{{ url_for('index') }}">
+            <i class="fas fa-shipping-fast"></i>
+            Majesty Xpress Logistics
+        </a>
     </div>
-</div>
-{% endblock %}
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Auth Container -->
+        <div class="auth-container">
+            <div class="auth-wrapper">
+                <div class="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Login to your account to manage your shipments</p>
+                </div>
+                
+                <div class="auth-card">
+                    <form method="POST" action="{{ url_for('users.login') }}">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" class="form-control" 
+                                   placeholder="Enter your email address" 
+                                   required autocomplete="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" 
+                                   placeholder="Enter your password" 
+                                   required autocomplete="current-password">
+                        </div>
+                        
+                        <div class="remember-forgot">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="remember" name="remember">
+                                <label for="remember">Remember me</label>
+                            </div>
+                            <a href="#" class="forgot-link">Forgot password?</a>
+                        </div>
+                        
+                        <button type="submit" class="login-btn">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        
+                        <!--<div class="social-login">
+                            <div class="social-divider">
+                                <span>Or login with</span>
+                            </div>
+                            <div class="social-buttons">
+                                <button type="button" class="social-btn google">
+                                    <i class="fab fa-google"></i> Google
+                                </button>
+                                <button type="button" class="social-btn facebook">
+                                    <i class="fab fa-facebook-f"></i> Facebook
+                                </button>
+                            </div>
+                        </div> -->
+                        
+                        <div class="auth-links">
+                            Don't have an account? 
+                            <a href="{{ url_for('users.register') }}">Register here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide flash messages after 5 seconds
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    alert.style.transition = 'opacity 0.5s, transform 0.5s';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-20px)';
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 5000);
+
+            // Form validation
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const email = this.querySelector('#email');
+                    const password = this.querySelector('#password');
+                    
+                    if (!email.value || !password.value) {
+                        e.preventDefault();
+                        
+                        if (!email.value) {
+                            email.classList.add('error');
+                            email.focus();
+                        } else if (!password.value) {
+                            password.classList.add('error');
+                            password.focus();
+                        }
+                        
+                        // Remove error class after 2 seconds
+                        setTimeout(() => {
+                            email.classList.remove('error');
+                            password.classList.remove('error');
+                        }, 2000);
+                    }
+                });
+            }
+
+            // Touch device detection
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            if (isTouchDevice) {
+                document.body.classList.add('touch-device');
+                
+                // Improve touch feedback
+                document.querySelectorAll('.login-btn, .social-btn, .forgot-link, .auth-links a').forEach(element => {
+                    element.addEventListener('touchstart', function() {
+                        this.classList.add('touch-active');
+                    }, { passive: true });
+                    
+                    element.addEventListener('touchend', function() {
+                        this.classList.remove('touch-active');
+                    }, { passive: true });
+                });
+            }
+
+            // Prevent zoom on input focus in iOS
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    if (window.innerWidth <= 768) {
+                        this.style.fontSize = '16px';
+                    }
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.fontSize = '';
+                });
+            });
+
+            // Social login buttons (placeholder functionality)
+            document.querySelectorAll('.social-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const platform = this.classList.contains('google') ? 'Google' : 'Facebook';
+                    alert(`${platform} login integration would be implemented here.`);
+                });
+            });
+
+            // Forgot password (placeholder)
+            document.querySelector('.forgot-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Password reset functionality would be implemented here.');
+            });
+        });
+    </script>
+</body>
+</html>

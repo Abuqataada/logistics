@@ -471,10 +471,6 @@
         .tracking-input {
             min-height: 3.25rem;
         }
-
-        .nav-links a {
-            padding: 1rem 1.5rem;
-        }
     }
 
     /* Safe Area Support for Notched Phones */
@@ -550,6 +546,20 @@
             background: white !important;
             color: black !important;
         }
+    }
+
+    /* Fix for mobile scrolling */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Ensure content is scrollable */
+    main {
+        overflow: visible;
+        position: relative;
     }
 </style>
 
@@ -682,7 +692,7 @@
     </div>
 </div>
 
-<!-- Enhanced Mobile JavaScript -->
+<!-- Enhanced Mobile JavaScript - Fixed scrolling issue -->
 <script>
     // Enhanced mobile interactions
     document.addEventListener('DOMContentLoaded', function() {
@@ -807,14 +817,31 @@
             }
         });
 
-        // Prevent pull-to-refresh on mobile
+        // REMOVED THE PROBLEMATIC PREVENT PULL-TO-REFRESH CODE
+        // This was preventing scrolling on mobile
+        
+        // Instead, use a more targeted approach for preventing pull-to-refresh
+        // only when absolutely necessary and not interfering with normal scrolling
+        let startY = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].pageY;
+        }, { passive: true });
+        
         document.addEventListener('touchmove', function(e) {
-            if (window.scrollY === 0 && e.target.type === 'range') {
-                return;
+            // Only prevent if we're at the top of the page and user is pulling down
+            if (window.scrollY <= 0) {
+                const currentY = e.touches[0].pageY;
+                
+                // If pulling down more than 10px from the top
+                if (currentY - startY > 10) {
+                    e.preventDefault();
+                    return false;
+                }
             }
-            if (window.scrollY === 0) {
-                e.preventDefault();
-            }
+            
+            // Allow all other touch movements
+            return true;
         }, { passive: false });
     });
 </script>
