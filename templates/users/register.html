@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Register - LogiTrack{% endblock %}
+
+{% block content %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .auth-header {
+        text-align: center;
+        padding: 3rem 0;
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+    }
+    
+    .auth-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .auth-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .register-btn {
+        width: 100%;
+        background: #3498db;
+        color: white;
+        padding: 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-top: 1rem;
+    }
+    
+    .register-btn:hover {
+        background: #2980b9;
+    }
+    
+    .auth-links {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+    }
+    
+    .auth-links a {
+        color: #3498db;
+        text-decoration: none;
+        margin: 0 0.5rem;
+    }
+    
+    .auth-links a:hover {
+        text-decoration: underline;
+    }
+    
+    .password-strength {
+        height: 4px;
+        background: #ddd;
+        border-radius: 2px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+    
+    .strength-bar {
+        height: 100%;
+        width: 0%;
+        transition: width 0.3s;
+    }
+    
+    .password-requirements {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        margin-top: 0.5rem;
+    }
+    
+    .requirement {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.2rem;
+    }
+    
+    .requirement.met {
+        color: #2ecc71;
+    }
+    
+    .requirement i {
+        margin-right: 0.5rem;
+        font-size: 0.8rem;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-header">
+        <h1>Create Account</h1>
+        <p>Join thousands of satisfied customers</p>
+    </div>
+    
+    <div class="auth-card">
+        <form method="POST" action="{{ url_for('users.register') }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="company_name">Company Name (Optional)</label>
+                <input type="text" id="company_name" name="company_name" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+                <div class="password-strength">
+                    <div class="strength-bar" id="strength-bar"></div>
+                </div>
+                <div class="password-requirements">
+                    <div class="requirement" id="length-req">
+                        <i class="fas fa-circle"></i> At least 8 characters
+                    </div>
+                    <div class="requirement" id="upper-req">
+                        <i class="fas fa-circle"></i> One uppercase letter
+                    </div>
+                    <div class="requirement" id="lower-req">
+                        <i class="fas fa-circle"></i> One lowercase letter
+                    </div>
+                    <div class="requirement" id="number-req">
+                        <i class="fas fa-circle"></i> One number
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                <small id="password-match" style="color: #2ecc71; display: none;">
+                    <i class="fas fa-check-circle"></i> Passwords match
+                </small>
+                <small id="password-mismatch" style="color: #e74c3c; display: none;">
+                    <i class="fas fa-exclamation-circle"></i> Passwords do not match
+                </small>
+            </div>
+            
+            <div class="checkbox-group" style="margin: 1.5rem 0;">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms" style="display: inline; margin-bottom: 0;">
+                    I agree to the <a href="#" style="color: #3498db;">Terms of Service</a> and <a href="#" style="color: #3498db;">Privacy Policy</a>
+                </label>
+            </div>
+            
+            <div class="checkbox-group" style="margin-bottom: 1.5rem;">
+                <input type="checkbox" id="newsletter" name="newsletter" checked>
+                <label for="newsletter" style="display: inline; margin-bottom: 0;">
+                    Subscribe to our newsletter for updates and promotions
+                </label>
+            </div>
+            
+            <button type="submit" class="register-btn" id="submit-btn" disabled>
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+            
+            <div class="auth-links">
+                Already have an account? <a href="{{ url_for('users.login') }}">Login here</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        const bar = document.getElementById('strength-bar');
+        
+        // Check length
+        const lengthReq = document.getElementById('length-req');
+        if (password.length >= 8) {
+            strength += 25;
+            lengthReq.classList.add('met');
+            lengthReq.innerHTML = '<i class="fas fa-check-circle"></i> At least 8 characters';
+        } else {
+            lengthReq.classList.remove('met');
+            lengthReq.innerHTML = '<i class="fas fa-circle"></i> At least 8 characters';
+        }
+        
+        // Check uppercase
+        const upperReq = document.getElementById('upper-req');
+        if (/[A-Z]/.test(password)) {
+            strength += 25;
+            upperReq.classList.add('met');
+            upperReq.innerHTML = '<i class="fas fa-check-circle"></i> One uppercase letter';
+        } else {
+            upperReq.classList.remove('met');
+            upperReq.innerHTML = '<i class="fas fa-circle"></i> One uppercase letter';
+        }
+        
+        // Check lowercase
+        const lowerReq = document.getElementById('lower-req');
+        if (/[a-z]/.test(password)) {
+            strength += 25;
+            lowerReq.classList.add('met');
+            lowerReq.innerHTML = '<i class="fas fa-check-circle"></i> One lowercase letter';
+        } else {
+            lowerReq.classList.remove('met');
+            lowerReq.innerHTML = '<i class="fas fa-circle"></i> One lowercase letter';
+        }
+        
+        // Check number
+        const numberReq = document.getElementById('number-req');
+        if (/[0-9]/.test(password)) {
+            strength += 25;
+            numberReq.classList.add('met');
+            numberReq.innerHTML = '<i class="fas fa-check-circle"></i> One number';
+        } else {
+            numberReq.classList.remove('met');
+            numberReq.innerHTML = '<i class="fas fa-circle"></i> One number';
+        }
+        
+        // Update strength bar
+        bar.style.width = strength + '%';
+        if (strength < 50) {
+            bar.style.backgroundColor = '#e74c3c';
+        } else if (strength < 75) {
+            bar.style.backgroundColor = '#f39c12';
+        } else {
+            bar.style.backgroundColor = '#2ecc71';
+        }
+        
+        return strength === 100; // Returns true if all requirements met
+    }
+    
+    function checkPasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirm_password').value;
+        const match = document.getElementById('password-match');
+        const mismatch = document.getElementById('password-mismatch');
+        
+        if (confirm === '') {
+            match.style.display = 'none';
+            mismatch.style.display = 'none';
+            return false;
+        }
+        
+        if (password === confirm) {
+            match.style.display = 'block';
+            mismatch.style.display = 'none';
+            return true;
+        } else {
+            match.style.display = 'none';
+            mismatch.style.display = 'block';
+            return false;
+        }
+    }
+    
+    function updateSubmitButton() {
+        const password = document.getElementById('password').value;
+        const isStrong = checkPasswordStrength(password);
+        const passwordsMatch = checkPasswordMatch();
+        const termsChecked = document.getElementById('terms').checked;
+        const submitBtn = document.getElementById('submit-btn');
+        
+        // Enable button only if all conditions are met
+        submitBtn.disabled = !(isStrong && passwordsMatch && termsChecked);
+    }
+    
+    // Add event listeners
+    document.getElementById('password').addEventListener('input', function() {
+        checkPasswordStrength(this.value);
+        checkPasswordMatch();
+        updateSubmitButton();
+    });
+    
+    document.getElementById('confirm_password').addEventListener('input', function() {
+        checkPasswordMatch();
+        updateSubmitButton();
+    });
+    
+    document.getElementById('terms').addEventListener('change', updateSubmitButton);
+    
+    // Initialize
+    updateSubmitButton();
+</script>
+{% endblock %}

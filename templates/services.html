@@ -1,0 +1,623 @@
+{% extends "base.html" %}
+
+{% block title %}Our Services - LogiTrack{% endblock %}
+
+{% block content %}
+<style>
+    /* Page Header */
+    .page-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 5rem 3rem;
+        text-align: center;
+        margin-bottom: 4rem;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+
+    .page-header h1 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 900;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .page-header p {
+        font-size: 1.3rem;
+        color: #4a5568;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.8;
+        font-weight: 500;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Services Grid */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    
+    .service-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.1);
+        transition: all 0.4s ease;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        position: relative;
+    }
+
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .service-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(102, 126, 234, 0.2);
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+    
+    .service-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+        font-size: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-icon::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+    
+    .service-content {
+        padding: 2.5rem;
+    }
+    
+    .service-content h3 {
+        color: #2d3748;
+        margin-bottom: 1rem;
+        font-size: 1.6rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .service-content > p {
+        color: #718096;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+    }
+    
+    .price {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin: 1.5rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+    }
+    
+    .service-features {
+        list-style: none;
+        margin: 1.5rem 0;
+        padding: 0;
+    }
+    
+    .service-features li {
+        padding: 0.8rem 0;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        color: #4a5568;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+    
+    .service-features li:before {
+        content: "✓";
+        color: #48bb78;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    
+    .service-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+    
+    .service-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Comparison Table */
+    .comparison-section {
+        margin-bottom: 4rem;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 900;
+        margin-bottom: 0.8rem;
+    }
+
+    .section-title p {
+        color: #718096;
+        font-size: 1.1rem;
+    }
+    
+    .comparison-table {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .comparison-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .comparison-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        text-align: left;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    
+    .comparison-table td {
+        padding: 1.3rem 1.5rem;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        color: #4a5568;
+        font-weight: 500;
+    }
+    
+    .comparison-table tr:nth-child(even) {
+        background: rgba(102, 126, 234, 0.03);
+    }
+    
+    .comparison-table tr:hover {
+        background: rgba(102, 126, 234, 0.05);
+    }
+    
+    .check {
+        color: #48bb78;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    
+    .cross {
+        color: #f56565;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 4rem 3rem;
+        text-align: center;
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -150px;
+        right: -150px;
+        animation: pulse 3s infinite ease-in-out;
+    }
+
+    .cta-section::after {
+        content: '';
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, rgba(118, 75, 162, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        bottom: -125px;
+        left: -125px;
+        animation: pulse 3s infinite ease-in-out 1.5s;
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 900;
+    }
+
+    .cta-section p {
+        color: #4a5568;
+        font-size: 1.2rem;
+        max-width: 650px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.8;
+        font-weight: 500;
+    }
+
+    /* Animations */
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.2); opacity: 0.8; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 3rem 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+        }
+
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+        }
+
+        .cta-section {
+            padding: 3rem 2rem;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+        }
+
+        .comparison-table {
+            overflow-x: auto;
+        }
+
+        .comparison-table table {
+            min-width: 600px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-header {
+            padding: 2.5rem 1.5rem;
+        }
+
+        .service-content {
+            padding: 2rem;
+        }
+
+        .price {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Our Logistics Services</h1>
+    <p>Comprehensive solutions for all your shipping needs with premium care and precision</p>
+</section>
+
+<!-- Services Grid -->
+<div class="services-grid">
+    <!-- Express Delivery -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-shipping-fast"></i>
+        </div>
+        <div class="service-content">
+            <h3>Express Delivery</h3>
+            <p>Same-day and next-day delivery services for urgent packages with premium handling.</p>
+            <div class="price">From ₦9.99</div>
+            <ul class="service-features">
+                <li>Same-day delivery available</li>
+                <li>Real-time tracking</li>
+                <li>Door-to-door service</li>
+                <li>Insurance included</li>
+                <li>24/7 customer support</li>
+            </ul>
+            <a href="{{ url_for('book_delivery') }}" class="service-btn">
+                <i class="fas fa-rocket"></i> Book Now
+            </a>
+        </div>
+    </div>
+    
+    <!-- Standard Delivery -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-truck"></i>
+        </div>
+        <div class="service-content">
+            <h3>Standard Delivery</h3>
+            <p>Reliable delivery within 2-3 business days for regular shipments at economical rates.</p>
+            <div class="price">From ₦4.99</div>
+            <ul class="service-features">
+                <li>2-3 business days</li>
+                <li>Package tracking</li>
+                <li>Email notifications</li>
+                <li>Basic insurance</li>
+                <li>Economical pricing</li>
+            </ul>
+            <a href="{{ url_for('book_delivery') }}" class="service-btn">
+                <i class="fas fa-rocket"></i> Book Now
+            </a>
+        </div>
+    </div>
+    
+    <!-- International Shipping -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-globe-americas"></i>
+        </div>
+        <div class="service-content">
+            <h3>International Shipping</h3>
+            <p>Global shipping services with customs clearance assistance and dedicated support.</p>
+            <div class="price">From ₦24.99</div>
+            <ul class="service-features">
+                <li>Worldwide coverage</li>
+                <li>Customs documentation</li>
+                <li>Real-time tracking</li>
+                <li>Premium insurance</li>
+                <li>Dedicated support</li>
+            </ul>
+            <a href="{{ url_for('book_delivery') }}" class="service-btn">
+                <i class="fas fa-rocket"></i> Book Now
+            </a>
+        </div>
+    </div>
+    
+    <!-- Business Solutions -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-briefcase"></i>
+        </div>
+        <div class="service-content">
+            <h3>Business Solutions</h3>
+            <p>Custom logistics solutions for businesses and enterprises with volume discounts.</p>
+            <div class="price">Custom Pricing</div>
+            <ul class="service-features">
+                <li>Volume discounts</li>
+                <li>API integration</li>
+                <li>Dedicated account manager</li>
+                <li>Bulk shipping</li>
+                <li>Custom reporting</li>
+            </ul>
+            <a href="{{ url_for('partnership') }}" class="service-btn">
+                <i class="fas fa-handshake"></i> Contact Sales
+            </a>
+        </div>
+    </div>
+    
+    <!-- Fragile Items -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-box-open"></i>
+        </div>
+        <div class="service-content">
+            <h3>Special Handling</h3>
+            <p>Specialized handling for fragile, valuable, or sensitive items with white-glove service.</p>
+            <div class="price">From ₦19.99</div>
+            <ul class="service-features">
+                <li>White-glove service</li>
+                <li>Temperature control</li>
+                <li>Special packaging</li>
+                <li>Extra insurance</li>
+                <li>Signature required</li>
+            </ul>
+            <a href="{{ url_for('book_delivery') }}" class="service-btn">
+                <i class="fas fa-rocket"></i> Book Now
+            </a>
+        </div>
+    </div>
+    
+    <!-- Storage -->
+    <div class="service-card">
+        <div class="service-icon">
+            <i class="fas fa-warehouse"></i>
+        </div>
+        <div class="service-content">
+            <h3>Storage Solutions</h3>
+            <p>Secure short-term and long-term storage solutions with inventory management.</p>
+            <div class="price">From ₦29/month</div>
+            <ul class="service-features">
+                <li>Secure facilities</li>
+                <li>Climate control</li>
+                <li>Inventory management</li>
+                <li>Pick & pack services</li>
+                <li>Monthly billing</li>
+            </ul>
+            <a href="{{ url_for('partnership') }}" class="service-btn">
+                <i class="fas fa-info-circle"></i> Learn More
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Service Comparison Table -->
+<div class="comparison-section">
+    <div class="section-title">
+        <h2>Service Comparison</h2>
+        <p>Compare our services to find the perfect fit for your needs</p>
+    </div>
+    
+    <div class="comparison-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Express</th>
+                    <th>Standard</th>
+                    <th>International</th>
+                    <th>Business</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Delivery Time</td>
+                    <td>Same/Next Day</td>
+                    <td>2-3 Days</td>
+                    <td>3-7 Days</td>
+                    <td>Custom</td>
+                </tr>
+                <tr>
+                    <td>Real-time Tracking</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Insurance Included</td>
+                    <td>₦500</td>
+                    <td>₦100</td>
+                    <td>₦1000</td>
+                    <td>Custom</td>
+                </tr>
+                <tr>
+                    <td>Package Size Limit</td>
+                    <td>50kg</td>
+                    <td>30kg</td>
+                    <td>70kg</td>
+                    <td>Custom</td>
+                </tr>
+                <tr>
+                    <td>Pickup Service</td>
+                    <td class="check">✓</td>
+                    <td class="cross">✗</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Weekend Delivery</td>
+                    <td class="check">✓</td>
+                    <td class="cross">✗</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Customer Support</td>
+                    <td>24/7</td>
+                    <td>Business Hours</td>
+                    <td>24/7</td>
+                    <td>Dedicated</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="cta-section">
+    <div class="cta-content">
+        <h2>Need a Custom Solution?</h2>
+        <p>Contact our sales team for tailored logistics solutions that perfectly fit your specific business needs and requirements.</p>
+        <a href="{{ url_for('partnership') }}" class="service-btn" style="font-size: 1.15rem; padding: 1.3rem 2.8rem;">
+            <i class="fas fa-handshake"></i> Contact Our Team
+        </a>
+    </div>
+</div>
+{% endblock %}

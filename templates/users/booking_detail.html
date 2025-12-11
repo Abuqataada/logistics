@@ -1,0 +1,559 @@
+{% extends "base.html" %}
+
+{% block title %}Booking {{ booking.id }} - LogiTrack{% endblock %}
+
+{% block content %}
+<style>
+    .booking-detail-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .booking-header {
+        text-align: center;
+        padding: 3rem 0;
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+    }
+    
+    .booking-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .booking-id {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+    }
+    
+    .status-badge-large {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 1rem;
+    }
+    
+    .status-pending { background: #fef9e7; color: #f39c12; }
+    .status-confirmed { background: #e8f4fc; color: #3498db; }
+    .status-in_transit { background: #f4ecf7; color: #9b59b6; }
+    .status-delivered { background: #eafaf1; color: #2ecc71; }
+    .status-cancelled { background: #fdedec; color: #e74c3c; }
+    
+    .booking-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        padding: 0.8rem 1.5rem;
+        border: 2px solid white;
+        background: transparent;
+        color: white;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+    
+    .action-btn:hover {
+        background: white;
+        color: #3498db;
+    }
+    
+    .booking-sections {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .booking-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .card-header {
+        background: #2c3e50;
+        color: white;
+        padding: 1.2rem 1.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .info-row:last-child {
+        border-bottom: none;
+    }
+    
+    .info-label {
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+    
+    .info-value {
+        color: #2c3e50;
+        font-weight: 500;
+        text-align: right;
+    }
+    
+    .address-box {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-top: 0.5rem;
+    }
+    
+    .address-box p {
+        margin: 0.3rem 0;
+        color: #34495e;
+    }
+    
+    .timeline-section {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 3rem;
+    }
+    
+    .timeline-header {
+        background: #2c3e50;
+        color: white;
+        padding: 1.2rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .timeline-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .timeline-content {
+        padding: 2rem;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-left: 80px;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-dot {
+        position: absolute;
+        left: 20px;
+        width: 12px;
+        height: 12px;
+        background: #3498db;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #3498db;
+    }
+    
+    .timeline-content-inner {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        position: relative;
+    }
+    
+    .timeline-content-inner:before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 20px;
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid #f8f9fa;
+    }
+    
+    .timeline-time {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .timeline-location {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .timeline-description {
+        color: #34495e;
+    }
+    
+    .no-updates {
+        text-align: center;
+        padding: 3rem;
+        color: #7f8c8d;
+    }
+    
+    .no-updates i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .actions-section {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-primary {
+        background: #3498db;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background: #2980b9;
+    }
+    
+    .btn-secondary {
+        background: #95a5a6;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-danger {
+        background: #e74c3c;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background 0.3s;
+    }
+    
+    .btn-danger:hover {
+        background: #c0392b;
+    }
+    
+    .alert-box {
+        background: #fef9e7;
+        border: 1px solid #f39c12;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .alert-icon {
+        color: #f39c12;
+        font-size: 1.5rem;
+    }
+    
+    .alert-content h3 {
+        margin: 0 0 0.5rem 0;
+        color: #d35400;
+    }
+    
+    .alert-content p {
+        margin: 0;
+        color: #34495e;
+    }
+</style>
+
+<div class="booking-detail-container">
+    <div class="booking-header">
+        <h1>Booking Details</h1>
+        <div class="booking-id">Booking ID: {{ booking.id }}</div>
+        <div class="tracking-number" style="font-size: 1.3rem; font-weight: 500;">
+            Tracking: {{ booking.tracking_number }}
+        </div>
+        <div class="status-badge-large status-{{ booking.status }}">
+            {{ booking.status|replace('_', ' ')|title }}
+        </div>
+        
+        <div class="booking-actions">
+            <a href="{{ url_for('track_delivery', tracking_number=booking.tracking_number) }}" class="action-btn">
+                <i class="fas fa-search"></i> Track This Shipment
+            </a>
+            <a href="{{ url_for('users.bookings') }}" class="action-btn">
+                <i class="fas fa-list"></i> View All Bookings
+            </a>
+            {% if booking.status in ['pending', 'confirmed'] %}
+            <button class="action-btn" onclick="cancelBooking()">
+                <i class="fas fa-times"></i> Cancel Booking
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if booking.status == 'pending' and booking.payment_status == 'unpaid' %}
+    <div class="alert-box">
+        <div class="alert-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="alert-content">
+            <h3>Payment Required</h3>
+            <p>Your booking is pending payment. Please complete the payment to confirm your shipment.</p>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Booking Information Sections -->
+    <div class="booking-sections">
+        <!-- Shipment Details -->
+        <div class="booking-card">
+            <div class="card-header">
+                <i class="fas fa-box"></i> Shipment Details
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">Package Type:</span>
+                    <span class="info-value">{{ booking.package_type|title if booking.package_type else 'Standard' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Weight:</span>
+                    <span class="info-value">{{ booking.weight }} kg</span>
+                </div>
+                {% if booking.dimensions %}
+                <div class="info-row">
+                    <span class="info-label">Dimensions:</span>
+                    <span class="info-value">{{ booking.dimensions }} cm</span>
+                </div>
+                {% endif %}
+                {% if booking.package_value %}
+                <div class="info-row">
+                    <span class="info-label">Declared Value:</span>
+                    <span class="info-value">₦{{ "%.2f"|format(booking.package_value) }}</span>
+                </div>
+                {% endif %}
+                <div class="info-row">
+                    <span class="info-label">Insurance:</span>
+                    <span class="info-value">
+                        {% if booking.insurance_required %}
+                            <span style="color: #2ecc71;">✓ Included</span>
+                        {% else %}
+                            <span style="color: #7f8c8d;">Not included</span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% if booking.special_instructions %}
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                    <div class="info-label" style="margin-bottom: 0.5rem;">Special Instructions:</div>
+                    <div style="color: #34495e; font-style: italic;">{{ booking.special_instructions }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Address Information -->
+        <div class="booking-card">
+            <div class="card-header">
+                <i class="fas fa-map-marker-alt"></i> Address Information
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">Pickup Address:</span>
+                </div>
+                <div class="address-box">
+                    <p>{{ booking.pickup_address }}</p>
+                    {% if booking.pickup_date %}
+                    <p style="color: #3498db; font-weight: 500;">
+                        <i class="fas fa-calendar-alt"></i> {{ booking.pickup_date.strftime('%Y-%m-%d %H:%M') }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <div class="info-row" style="margin-top: 1rem;">
+                    <span class="info-label">Delivery Address:</span>
+                </div>
+                <div class="address-box">
+                    <p>{{ booking.delivery_address }}</p>
+                    {% if booking.estimated_delivery %}
+                    <p style="color: #2ecc71; font-weight: 500;">
+                        <i class="fas fa-clock"></i> Est. Delivery: {{ booking.estimated_delivery.strftime('%Y-%m-%d %H:%M') }}
+                    </p>
+                    {% endif %}
+                    {% if booking.delivery_date %}
+                    <p style="color: #2ecc71; font-weight: 500;">
+                        <i class="fas fa-check-circle"></i> Delivered: {{ booking.delivery_date.strftime('%Y-%m-%d %H:%M') }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Information -->
+        <div class="booking-card">
+            <div class="card-header">
+                <i class="fas fa-credit-card"></i> Payment Information
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">Amount:</span>
+                    <span class="info-value">
+                        {% if booking.amount %}
+                            ₦{{ "%.2f"|format(booking.amount) }}
+                        {% else %}
+                            Pending Calculation
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Currency:</span>
+                    <span class="info-value">{{ booking.currency }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Payment Status:</span>
+                    <span class="info-value">
+                        {% if booking.payment_status == 'paid' %}
+                            <span style="color: #2ecc71; font-weight: 600;">Paid</span>
+                        {% elif booking.payment_status == 'partial' %}
+                            <span style="color: #f39c12; font-weight: 600;">Partial</span>
+                        {% else %}
+                            <span style="color: #e74c3c; font-weight: 600;">Unpaid</span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% if booking.payment_method %}
+                <div class="info-row">
+                    <span class="info-label">Payment Method:</span>
+                    <span class="info-value">{{ booking.payment_method|title }}</span>
+                </div>
+                {% endif %}
+                {% if booking.stripe_payment_intent_id %}
+                <div class="info-row">
+                    <span class="info-label">Transaction ID:</span>
+                    <span class="info-value" style="font-size: 0.9rem;">{{ booking.stripe_payment_intent_id }}</span>
+                </div>
+                {% endif %}
+                <div class="info-row">
+                    <span class="info-label">Created:</span>
+                    <span class="info-value">{{ booking.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Last Updated:</span>
+                    <span class="info-value">{{ booking.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tracking Timeline -->
+    <div class="timeline-section">
+        <div class="timeline-header">
+            <h2><i class="fas fa-history"></i> Tracking History</h2>
+            <span style="color: #3498db;">{{ updates|length }} update{% if updates|length != 1 %}s{% endif %}</span>
+        </div>
+        <div class="timeline-content">
+            {% if updates %}
+                {% for update in updates %}
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content-inner">
+                        <div class="timeline-time">
+                            {{ update.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                        </div>
+                        <div class="timeline-location">
+                            <i class="fas fa-map-marker-alt"></i> {{ update.location }}
+                        </div>
+                        <div class="timeline-description">
+                            {{ update.description }}
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <span class="status-badge" style="font-size: 0.8rem; padding: 0.3rem 0.8rem;">
+                                {{ update.status|replace('_', ' ')|title }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-updates">
+                    <i class="fas fa-history"></i>
+                    <h3>No Tracking Updates Yet</h3>
+                    <p>Tracking information will appear here once your shipment is processed.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="actions-section">
+        <a href="{{ url_for('users.bookings') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Bookings
+        </a>
+        <a href="{{ url_for('book_delivery') }}" class="btn-primary">
+            <i class="fas fa-plus"></i> Create New Booking
+        </a>
+        <a href="{{ url_for('track_delivery', tracking_number=booking.tracking_number) }}" class="btn-primary">
+            <i class="fas fa-external-link-alt"></i> Open Tracking Page
+        </a>
+        {% if booking.status in ['pending', 'confirmed'] %}
+        <button class="btn-danger" onclick="cancelBooking()">
+            <i class="fas fa-times"></i> Cancel This Booking
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function cancelBooking() {
+        if (confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
+            // In a real application, you would make an AJAX request to cancel the booking
+            alert('Cancellation functionality would be implemented here for booking ID: {{ booking.id }}');
+            // After successful cancellation, you could reload the page or update the status
+        }
+    }
+    
+    function makePayment() {
+        // In a real application, this would initiate a payment process
+        alert('Payment functionality would be implemented here for booking ID: {{ booking.id }}');
+    }
+</script>
+{% endblock %}

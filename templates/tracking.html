@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block title %}Track Your Delivery - LogiTrack{% endblock %}
+
+{% block content %}
+<style>
+    .tracking-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .tracking-header {
+        text-align: center;
+        padding: 3rem 0;
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+    }
+    
+    .tracking-header h1 {
+        font-size: 2.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .tracking-form-container {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 3rem;
+    }
+    
+    .tracking-input-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .tracking-input {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #3498db;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+    
+    .track-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 0 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .track-btn:hover {
+        background: #2980b9;
+    }
+    
+    /* Tracking Result Styles */
+    .tracking-result {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin-bottom: 3rem;
+    }
+    
+    .tracking-summary {
+        background: #2c3e50;
+        color: white;
+        padding: 2rem;
+    }
+    
+    .tracking-number {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .status-pending { background: #f39c12; }
+    .status-confirmed { background: #3498db; }
+    .status-in_transit { background: #9b59b6; }
+    .status-delivered { background: #2ecc71; }
+    .status-cancelled { background: #e74c3c; }
+    
+    .tracking-details {
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+    
+    .detail-card {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+    
+    .detail-card h3 {
+        color: #2c3e50;
+        margin-bottom: 0.8rem;
+        font-size: 1.1rem;
+    }
+    
+    .detail-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #3498db;
+    }
+    
+    /* Timeline Styles */
+    .timeline {
+        position: relative;
+        padding: 2rem;
+    }
+    
+    .timeline:before {
+        content: '';
+        position: absolute;
+        left: 50px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: #3498db;
+        transform: translateX(-50%);
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-left: 80px;
+    }
+    
+    .timeline-dot {
+        position: absolute;
+        left: 44px;
+        width: 12px;
+        height: 12px;
+        background: #3498db;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #3498db;
+    }
+    
+    .timeline-content {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
+    .timeline-time {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .timeline-location {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .timeline-description {
+        color: #34495e;
+    }
+    
+    /* Error Message */
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #f5c6cb;
+        text-align: center;
+        margin-top: 2rem;
+    }
+</style>
+
+<div class="tracking-container">
+    <div class="tracking-header">
+        <h1>Track Your Delivery</h1>
+        <p>Enter your tracking number to check the real-time status of your shipment</p>
+    </div>
+    
+    <div class="tracking-form-container">
+        <form method="GET" action="{{ url_for('track_delivery_page') }}">
+            <div class="tracking-input-group">
+                <input 
+                    type="text" 
+                    name="tracking_number" 
+                    placeholder="Enter tracking number (e.g., TRK-XXXXXXXX)" 
+                    class="tracking-input"
+                    value="{{ request.args.get('tracking_number', '') }}"
+                    required
+                >
+                <button type="submit" class="track-btn">
+                    <i class="fas fa-search"></i> Track Shipment
+                </button>
+            </div>
+        </form>
+        
+        <p style="color: #7f8c8d; font-size: 0.9rem; text-align: center;">
+            <i class="fas fa-info-circle"></i> Find your tracking number in your booking confirmation email or in your account dashboard.
+        </p>
+    </div>
+    
+    {% if error %}
+    <div class="error-message">
+        <h3><i class="fas fa-exclamation-triangle"></i> Tracking Error</h3>
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+    
+    {% if booking %}
+    <div class="tracking-result">
+        <div class="tracking-summary">
+            <div class="tracking-number">
+                <strong>Tracking Number:</strong> {{ booking.tracking_number }}
+            </div>
+            <div class="status-badge status-{{ booking.status }}">
+                {{ booking.status|replace('_', ' ')|title }}
+            </div>
+            <div>
+                <strong>Booking ID:</strong> {{ booking.id }} | 
+                <strong>Created:</strong> {{ booking.created_at.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+        </div>
+        
+        <div class="tracking-details">
+            <div class="detail-card">
+                <h3><i class="fas fa-map-marker-alt"></i> Pickup Address</h3>
+                <p class="detail-value">{{ booking.pickup_address|truncate(40) }}</p>
+                {% if booking.pickup_date %}
+                <p><strong>Scheduled:</strong> {{ booking.pickup_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="detail-card">
+                <h3><i class="fas fa-flag-checkered"></i> Delivery Address</h3>
+                <p class="detail-value">{{ booking.delivery_address|truncate(40) }}</p>
+                {% if booking.estimated_delivery %}
+                <p><strong>Estimated Delivery:</strong> {{ booking.estimated_delivery.strftime('%Y-%m-%d %H:%M') }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="detail-card">
+                <h3><i class="fas fa-box"></i> Package Details</h3>
+                <p><strong>Type:</strong> {{ booking.package_type|title if booking.package_type else 'Standard' }}</p>
+                <p><strong>Weight:</strong> {{ booking.weight }} kg</p>
+                {% if booking.amount %}
+                <p><strong>Amount:</strong> ₦{{ "%.2f"|format(booking.amount) }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="detail-card">
+                <h3><i class="fas fa-file-invoice-dollar"></i> Payment Status</h3>
+                <p><strong>Status:</strong> {{ booking.payment_status|title }}</p>
+                {% if booking.payment_method %}
+                <p><strong>Method:</strong> {{ booking.payment_method|title }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if booking.tracking_updates %}
+        <div style="padding: 2rem;">
+            <h2 style="color: #2c3e50; margin-bottom: 1.5rem;">Tracking History</h2>
+            <div class="timeline">
+                {% for update in updates %}
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">
+                            {{ update.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                        </div>
+                        <div class="timeline-location">
+                            <i class="fas fa-map-marker-alt"></i> {{ update.location }}
+                        </div>
+                        <div class="timeline-description">
+                            {{ update.description }}
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <span class="status-badge" style="font-size: 0.8rem; padding: 0.3rem 0.8rem;">
+                                {{ update.status|replace('_', ' ')|title }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div style="text-align: center; padding: 2rem;">
+        <p style="color: #7f8c8d; margin-bottom: 1rem;">
+            Need help with your shipment? Contact our support team.
+        </p>
+        <a href="mailto:support@logitrack.com" style="color: #3498db; text-decoration: none;">
+            <i class="fas fa-envelope"></i> support@logitrack.com
+        </a>
+    </div>
+    {% endif %}
+    
+    {% if not booking and not error and request.args.get('tracking_number') %}
+    <div class="error-message">
+        <h3><i class="fas fa-search"></i> No Results Found</h3>
+        <p>We couldn't find a shipment with the tracking number "{{ request.args.get('tracking_number') }}".</p>
+        <p>Please check the number and try again, or contact support if you believe this is an error.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

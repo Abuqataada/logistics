@@ -1,0 +1,15 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-WTF
+Flask-Admin
+Flask-Mail
+Flask-CORS
+python-dotenv
+psycopg2-binary
+stripe
+twilio
+googlemaps
+requests
+gunicorn
+python-dateutil

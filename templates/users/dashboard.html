@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - LogiTrack{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .dashboard-header {
+        text-align: center;
+        padding: 3rem 0;
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 2.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .dashboard-welcome {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .dashboard-welcome h2 {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+        color: #3498db;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+    
+    .dashboard-sections {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .dashboard-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .card-header {
+        background: #2c3e50;
+        color: white;
+        padding: 1.2rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .card-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+    
+    .card-header a {
+        color: #3498db;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    
+    .card-header a:hover {
+        text-decoration: underline;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .booking-item {
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .booking-item:last-child {
+        border-bottom: none;
+    }
+    
+    .booking-info h4 {
+        margin: 0 0 0.3rem 0;
+        color: #2c3e50;
+    }
+    
+    .booking-tracking {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .booking-status {
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .status-pending { background: #fef9e7; color: #f39c12; }
+    .status-confirmed { background: #e8f4fc; color: #3498db; }
+    .status-in_transit { background: #f4ecf7; color: #9b59b6; }
+    .status-delivered { background: #eafaf1; color: #2ecc71; }
+    .status-cancelled { background: #fdedec; color: #e74c3c; }
+    
+    .address-item {
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .address-item:last-child {
+        border-bottom: none;
+    }
+    
+    .address-type {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        background: #3498db;
+        color: white;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .address-details p {
+        margin: 0.2rem 0;
+        color: #34495e;
+    }
+    
+    .address-default {
+        color: #2ecc71;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    
+    .no-items {
+        text-align: center;
+        color: #7f8c8d;
+        padding: 2rem;
+    }
+    
+    .dashboard-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    
+    .action-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .action-icon {
+        font-size: 3rem;
+        color: #3498db;
+        margin-bottom: 1.5rem;
+    }
+    
+    .action-card h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .action-btn {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: background 0.3s;
+    }
+    
+    .action-btn:hover {
+        background: #2980b9;
+    }
+    
+    .recent-activity {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        padding: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .recent-activity h2 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        background: #e8f4fc;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: #3498db;
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-content p {
+        margin: 0;
+        color: #2c3e50;
+    }
+    
+    .activity-time {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Your Dashboard</h1>
+        <p>Welcome back, {{ user.first_name or user.email }}!</p>
+    </div>
+    
+    <div class="dashboard-welcome">
+        <h2>Hello, {{ user.first_name or 'Valued Customer' }}!</h2>
+        <p style="color: #7f8c8d;">Here's an overview of your account activity</p>
+    </div>
+    
+    <!-- Statistics -->
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="stat-number">
+                {{ total_bookings }}
+            </div>
+            <div class="stat-label">Active Shipments</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-number">
+                {{ delivered_count }}
+            </div>
+            <div class="stat-label">Delivered</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="stat-number">
+                {{ addresses_count }}
+            </div>
+            <div class="stat-label">Saved Addresses</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="stat-number">
+                {% if user.last_login %}
+                    {{ user.last_login.strftime('%b %d') }}
+                {% else %}
+                    New
+                {% endif %}
+            </div>
+            <div class="stat-label">Last Login</div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="dashboard-actions">
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <h3>Book a Delivery</h3>
+            <p>Schedule a new pickup and delivery</p>
+            <a href="{{ url_for('book_delivery') }}" class="action-btn">
+                Book Now
+            </a>
+        </div>
+        
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h3>Track Shipment</h3>
+            <p>Track your existing deliveries</p>
+            <a href="{{ url_for('track_delivery_page') }}" class="action-btn">
+                Track Now
+            </a>
+        </div>
+        
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-address-book"></i>
+            </div>
+            <h3>Manage Addresses</h3>
+            <p>Update your saved addresses</p>
+            <a href="{{ url_for('users.addresses') }}" class="action-btn">
+                Manage
+            </a>
+        </div>
+    </div>
+    
+    <!-- Recent Bookings & Addresses -->
+    <div class="dashboard-sections">
+        <!-- Recent Bookings -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Recent Shipments</h3>
+                <a href="{{ url_for('users.bookings') }}">View All</a>
+            </div>
+            <div class="card-body">
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <div class="booking-item">
+                        <div class="booking-info">
+                            <h4>{{ booking.id }}</h4>
+                            <div class="booking-tracking">
+                                {{ booking.tracking_number }}
+                            </div>
+                            <div style="font-size: 0.9rem; color: #7f8c8d;">
+                                {{ booking.created_at.strftime('%b %d, %Y') }}
+                            </div>
+                        </div>
+                        <div class="booking-status status-{{ booking.status }}">
+                            {{ booking.status|replace('_', ' ')|title }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-items">
+                        <i class="fas fa-box-open" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+                        <p>No shipments yet</p>
+                        <a href="{{ url_for('book_delivery') }}" class="action-btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                            Book Your First Delivery
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Saved Addresses -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Saved Addresses</h3>
+                <a href="{{ url_for('users.addresses') }}">Manage</a>
+            </div>
+            <div class="card-body">
+                {% if addresses %}
+                    {% for address in addresses %}
+                    <div class="address-item">
+                        <span class="address-type">{{ address.address_type|title }}</span>
+                        {% if address.is_default %}
+                            <span class="address-default">✓ Default</span>
+                        {% endif %}
+                        <div class="address-details">
+                            <p><strong>{{ address.contact_name }}</strong></p>
+                            <p>{{ address.address_line1 }}</p>
+                            {% if address.address_line2 %}
+                            <p>{{ address.address_line2 }}</p>
+                            {% endif %}
+                            <p>{{ address.city }}, {{ address.state }} {{ address.postal_code }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-items">
+                        <i class="fas fa-map-marker-alt" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+                        <p>No saved addresses</p>
+                        <a href="{{ url_for('users.addresses') }}" class="action-btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                            Add Address
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="recent-activity">
+        <h2>Recent Activity</h2>
+        
+        {% if bookings %}
+            {% for booking in bookings[:5] %}
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="activity-content">
+                    <p><strong>Shipment {{ booking.id }}</strong> was {{ booking.status|replace('_', ' ') }}</p>
+                    <div class="activity-time">
+                        {{ booking.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                    </div>
+                </div>
+                <div class="booking-status status-{{ booking.status }}" style="margin-left: 1rem;">
+                    {{ booking.status|replace('_', ' ')|title }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-items">
+                <p style="color: #7f8c8d; text-align: center;">No recent activity</p>
+            </div>
+        {% endif %}
+        
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="activity-content">
+                <p><strong>Account created</strong></p>
+                <div class="activity-time">
+                    {{ user.created_at.strftime('%B %d, %Y') }}
+                </div>
+            </div>
+        </div>
+        
+        {% if user.last_login %}
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-sign-in-alt"></i>
+            </div>
+            <div class="activity-content">
+                <p><strong>Last login</strong></p>
+                <div class="activity-time">
+                    {{ user.last_login.strftime('%B %d, %Y at %I:%M %p') }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

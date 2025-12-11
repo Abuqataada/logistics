@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+{% block title %}Business Partnership - LogiTrack{% endblock %}
+
+{% block content %}
+<style>
+    .partnership-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .partnership-hero {
+        text-align: center;
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+    }
+    
+    .partnership-hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .partnership-hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        opacity: 0.9;
+    }
+    
+    .partnership-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    
+    .type-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .type-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .type-icon {
+        font-size: 3rem;
+        color: #3498db;
+        margin-bottom: 1.5rem;
+    }
+    
+    .type-card h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .benefits-list {
+        list-style: none;
+        margin: 1.5rem 0;
+    }
+    
+    .benefits-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+    
+    .benefits-list li:before {
+        content: "✓";
+        color: #2ecc71;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    
+    .form-container {
+        background: white;
+        padding: 3rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 4rem;
+    }
+    
+    .form-title {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 2.5rem;
+        font-size: 2rem;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+    
+    .form-select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        background: white;
+    }
+    
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+    
+    .submit-btn {
+        background: #3498db;
+        color: white;
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: block;
+        margin: 2rem auto 0;
+        transition: background 0.3s;
+    }
+    
+    .submit-btn:hover {
+        background: #2980b9;
+    }
+    
+    .testimonials {
+        background: #f8f9fa;
+        padding: 3rem;
+        border-radius: 10px;
+        margin-bottom: 4rem;
+    }
+    
+    .testimonials h2 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+    }
+    
+    .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    
+    .testimonial-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    
+    .testimonial-text {
+        font-style: italic;
+        color: #34495e;
+        margin-bottom: 1rem;
+    }
+    
+    .testimonial-author {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    
+    .testimonial-company {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .partnership-benefits {
+        text-align: center;
+        padding: 3rem;
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+    }
+    
+    .partnership-benefits h2 {
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .benefit-item {
+        text-align: center;
+    }
+    
+    .benefit-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+</style>
+
+<div class="partnership-container">
+    <div class="partnership-hero">
+        <h1>Partner With Us</h1>
+        <p>Grow your business with our comprehensive logistics solutions. Join our network of trusted partners and expand your reach.</p>
+    </div>
+    
+    <!-- Partnership Types -->
+    <h2 style="text-align: center; color: #2c3e50; margin-bottom: 2rem;">Partnership Opportunities</h2>
+    <div class="partnership-types">
+        <div class="type-card">
+            <div class="type-icon">
+                <i class="fas fa-truck-loading"></i>
+            </div>
+            <h3>Logistics Partners</h3>
+            <p>Join our network of delivery partners and expand your service coverage.</p>
+            <ul class="benefits-list">
+                <li>Increased business volume</li>
+                <li>Technology platform access</li>
+                <li>Training & support</li>
+                <li>Marketing assistance</li>
+                <li>Competitive commissions</li>
+            </ul>
+        </div>
+        
+        <div class="type-card">
+            <div class="type-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <h3>Corporate Clients</h3>
+            <p>Enterprise shipping solutions for businesses of all sizes.</p>
+            <ul class="benefits-list">
+                <li>Volume discounts</li>
+                <li>Dedicated account manager</li>
+                <li>API integration</li>
+                <li>Custom reporting</li>
+                <li>Consolidated billing</li>
+            </ul>
+        </div>
+        
+        <div class="type-card">
+            <div class="type-icon">
+                <i class="fas fa-store"></i>
+            </div>
+            <h3>E-commerce Partners</h3>
+            <p>Seamless integration with your online store.</p>
+            <ul class="benefits-list">
+                <li>Plugin integration</li>
+                <li>Real-time shipping rates</li>
+                <li>Automated tracking</li>
+                <li>Bulk shipping tools</li>
+                <li>Returns management</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Partnership Benefits -->
+    <div class="partnership-benefits">
+        <h2>Why Partner With Us?</h2>
+        <p style="max-width: 700px; margin: 0 auto; opacity: 0.9;">
+            Join hundreds of satisfied partners who have grown their business with our logistics solutions.
+        </p>
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Increased Revenue</h3>
+                <p>Access to new markets and customers</p>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3>Technology</h3>
+                <p>Advanced platform and tools</p>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>Support</h3>
+                <p>24/7 dedicated support team</p>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Reliability</h3>
+                <p>Trusted by thousands of customers</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Application Form -->
+    <div class="form-container">
+        <h2 class="form-title">Apply for Partnership</h2>
+        <form method="POST" action="{{ url_for('partnership') }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="company_name">Company Name *</label>
+                    <input type="text" id="company_name" name="company_name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact_person">Contact Person *</label>
+                    <input type="text" id="contact_person" name="contact_person" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="business_type">Partnership Type *</label>
+                <select id="business_type" name="business_type" class="form-select" required>
+                    <option value="">Select type...</option>
+                    <option value="logistics_partner">Logistics Partner</option>
+                    <option value="corporate_client">Corporate Client</option>
+                    <option value="ecommerce_partner">E-commerce Partner</option>
+                    <option value="reseller">Reseller</option>
+                    <option value="affiliate">Affiliate Partner</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Tell us about your business and partnership goals</label>
+                <textarea id="message" name="message" class="form-control"
+                          placeholder="Please include: business size, current volume, expected shipping needs, etc."></textarea>
+            </div>
+            
+            <div class="form-group" style="text-align: center;">
+                <p style="color: #7f8c8d; margin-bottom: 1rem;">
+                    <i class="fas fa-info-circle"></i> Our partnership team will contact you within 2 business days.
+                </p>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Application
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Testimonials -->
+    <div class="testimonials">
+        <h2>What Our Partners Say</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    "Partnering with LogiTrack has helped us expand our delivery coverage by 40% while maintaining excellent service quality."
+                </div>
+                <div class="testimonial-author">Michael Rodriguez</div>
+                <div class="testimonial-company">QuickShip Logistics</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    "The API integration was seamless, and their support team is always responsive. Our shipping costs decreased by 15%."
+                </div>
+                <div class="testimonial-author">Sarah Johnson</div>
+                <div class="testimonial-company">Urban Goods E-commerce</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    "As a corporate partner, we appreciate the dedicated account management and customized reporting tools."
+                </div>
+                <div class="testimonial-author">David Chen</div>
+                <div class="testimonial-company">TechSolutions Inc.</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQ -->
+    <div style="background: white; padding: 3rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+        <h2 style="text-align: center; color: #2c3e50; margin-bottom: 2rem;">Frequently Asked Questions</h2>
+        
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee;">
+                <h3 style="color: #3498db; margin-bottom: 0.5rem;">What are the requirements to become a partner?</h3>
+                <p style="color: #34495e;">Requirements vary by partnership type. Generally, we look for established businesses with good track records, adequate insurance, and commitment to quality service.</p>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee;">
+                <h3 style="color: #3498db; margin-bottom: 0.5rem;">How long does the application process take?</h3>
+                <p style="color: #34495e;">Most applications are reviewed within 3-5 business days. The full onboarding process typically takes 1-2 weeks depending on the partnership type.</p>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #3498db; margin-bottom: 0.5rem;">What support do you provide to partners?</h3>
+                <p style="color: #34495e;">We provide comprehensive support including platform training, marketing materials, technical support for API integration, and dedicated account management for enterprise partners.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

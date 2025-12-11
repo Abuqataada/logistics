@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings - LogiTrack{% endblock %}
+
+{% block content %}
+<style>
+    .bookings-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .bookings-header {
+        text-align: center;
+        padding: 3rem 0;
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 3rem;
+    }
+    
+    .bookings-header h1 {
+        font-size: 2.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .bookings-filters {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .filter-label {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+    
+    .filter-select {
+        padding: 0.5rem 1rem;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        background: white;
+        color: #2c3e50;
+    }
+    
+    .bookings-table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        overflow-x: auto;
+    }
+    
+    .bookings-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .bookings-table th {
+        background: #2c3e50;
+        color: white;
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .bookings-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+    
+    .bookings-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .bookings-table tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .booking-id {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .tracking-number {
+        color: #3498db;
+        font-weight: 500;
+    }
+    
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .status-pending { background: #fef9e7; color: #f39c12; }
+    .status-confirmed { background: #e8f4fc; color: #3498db; }
+    .status-in_transit { background: #f4ecf7; color: #9b59b6; }
+    .status-delivered { background: #eafaf1; color: #2ecc71; }
+    .status-cancelled { background: #fdedec; color: #e74c3c; }
+    
+    .action-btn {
+        padding: 0.4rem 0.8rem;
+        border: 1px solid #3498db;
+        background: white;
+        color: #3498db;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.3s;
+    }
+    
+    .action-btn:hover {
+        background: #3498db;
+        color: white;
+    }
+    
+    .no-bookings {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .no-bookings i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 1.5rem;
+    }
+    
+    .no-bookings h2 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .no-bookings p {
+        color: #7f8c8d;
+        margin-bottom: 2rem;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    }
+    
+    .page-link {
+        padding: 0.5rem 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #2c3e50;
+        transition: all 0.3s;
+    }
+    
+    .page-link:hover {
+        background: #f8f9fa;
+    }
+    
+    .page-link.active {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+    
+    .page-link.disabled {
+        color: #bdc3c7;
+        cursor: not-allowed;
+    }
+    
+    .page-info {
+        color: #7f8c8d;
+        margin: 0 1rem;
+    }
+    
+    .bookings-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .summary-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+    
+    .summary-icon {
+        font-size: 2rem;
+        color: #3498db;
+        margin-bottom: 1rem;
+    }
+    
+    .summary-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .summary-label {
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+</style>
+
+<div class="bookings-container">
+    <div class="bookings-header">
+        <h1>My Bookings</h1>
+        <p>View and manage all your shipments</p>
+    </div>
+    
+    <!-- Bookings Summary -->
+    <div class="bookings-summary">
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="summary-number">{{ bookings.total }}</div>
+            <div class="summary-label">Total Bookings</div>
+        </div>
+        
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="fas fa-truck"></i>
+            </div>
+            <div class="summary-number">
+                {{ current_user.bookings.filter_by(status='in_transit').count() }}
+            </div>
+            <div class="summary-label">In Transit</div>
+        </div>
+        
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="summary-number">
+                {{ current_user.bookings.filter_by(status='delivered').count() }}
+            </div>
+            <div class="summary-label">Delivered</div>
+        </div>
+        
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="summary-number">
+                {{ current_user.bookings.filter_by(status='pending').count() }}
+            </div>
+            <div class="summary-label">Pending</div>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="bookings-filters">
+        <div class="filter-group">
+            <span class="filter-label">Status:</span>
+            <select class="filter-select" id="statusFilter">
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="in_transit">In Transit</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <span class="filter-label">Sort by:</span>
+            <select class="filter-select" id="sortFilter">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="amount_high">Amount (High to Low)</option>
+                <option value="amount_low">Amount (Low to High)</option>
+            </select>
+        </div>
+        
+        <div style="margin-left: auto;">
+            <a href="{{ url_for('book_delivery') }}" class="btn-primary" style="text-decoration: none;">
+                <i class="fas fa-plus"></i> New Booking
+            </a>
+        </div>
+    </div>
+    
+    {% if bookings.items %}
+    <!-- Bookings Table -->
+    <div class="bookings-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Tracking Number</th>
+                    <th>Status</th>
+                    <th>Pickup Address</th>
+                    <th>Delivery Address</th>
+                    <th>Amount</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings.items %}
+                <tr>
+                    <td>
+                        <div class="booking-id">{{ booking.id }}</div>
+                    </td>
+                    <td>
+                        <div class="tracking-number">{{ booking.tracking_number }}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ booking.status }}">
+                            {{ booking.status|replace('_', ' ')|title }}
+                        </span>
+                    </td>
+                    <td>{{ booking.pickup_address|truncate(30) }}</td>
+                    <td>{{ booking.delivery_address|truncate(30) }}</td>
+                    <td>
+                        {% if booking.amount %}
+                            ₦{{ "%.2f"|format(booking.amount) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ booking.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <a href="{{ url_for('users.booking_detail', booking_id=booking.id) }}" class="action-btn">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        <a href="{{ url_for('track_delivery', tracking_number=booking.tracking_number) }}" class="action-btn">
+                            <i class="fas fa-search"></i> Track
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if bookings.has_prev %}
+        <a href="{{ url_for('users.bookings', page=bookings.prev_num) }}" class="page-link">
+            <i class="fas fa-chevron-left"></i> Previous
+        </a>
+        {% else %}
+        <span class="page-link disabled">
+            <i class="fas fa-chevron-left"></i> Previous
+        </span>
+        {% endif %}
+        
+        <span class="page-info">
+            Page {{ bookings.page }} of {{ bookings.pages }}
+        </span>
+        
+        {% if bookings.has_next %}
+        <a href="{{ url_for('users.bookings', page=bookings.next_num) }}" class="page-link">
+            Next <i class="fas fa-chevron-right"></i>
+        </a>
+        {% else %}
+        <span class="page-link disabled">
+            Next <i class="fas fa-chevron-right"></i>
+        </span>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="no-bookings">
+        <i class="fas fa-box-open"></i>
+        <h2>No Bookings Yet</h2>
+        <p>You haven't made any bookings yet. Start by scheduling your first delivery.</p>
+        <a href="{{ url_for('book_delivery') }}" class="btn-primary" style="text-decoration: none;">
+            <i class="fas fa-shipping-fast"></i> Book Your First Delivery
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- Quick Actions -->
+    <div style="margin-top: 3rem; text-align: center;">
+        <p style="color: #7f8c8d; margin-bottom: 1rem;">Need help with a booking?</p>
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="{{ url_for('track_delivery_page') }}" class="action-btn">
+                <i class="fas fa-search"></i> Track a Shipment
+            </a>
+            <a href="mailto:support@logitrack.com" class="action-btn">
+                <i class="fas fa-envelope"></i> Contact Support
+            </a>
+            <a href="{{ url_for('users.dashboard') }}" class="action-btn">
+                <i class="fas fa-tachometer-alt"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Filter functionality
+    document.getElementById('statusFilter').addEventListener('change', function() {
+        const status = this.value;
+        if (status !== 'all') {
+            // In a real application, this would filter the bookings
+            alert('Filter by status: ' + status + ' (would reload page with filter)');
+        } else {
+            // Show all bookings
+        }
+    });
+    
+    document.getElementById('sortFilter').addEventListener('change', function() {
+        const sort = this.value;
+        alert('Sort by: ' + sort + ' (would reload page with sorting)');
+    });
+</script>
+{% endblock %}
