@@ -140,3 +140,37 @@ class ChatMessage(db.Model):
     message = db.Column(db.Text)
     is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+class PricingConfig(db.Model):
+    __tablename__ = 'pricing_configs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, default='Default Pricing')
+    is_active = db.Column(db.Boolean, default=True)
+    price_per_km = db.Column(db.Float, default=200.0)  # ₦ per km
+    minimum_price = db.Column(db.Float, default=500.0)  # Minimum delivery price
+    weight_surcharge_per_kg = db.Column(db.Float, default=1.5)  # ₦ per kg over 5kg
+    heavy_surcharge_per_kg = db.Column(db.Float, default=2.0)  # ₦ per kg over 20kg
+    insurance_rate = db.Column(db.Float, default=0.02)  # 2% of declared value
+    
+    # Service type multipliers
+    express_multiplier = db.Column(db.Float, default=1.5)
+    standard_multiplier = db.Column(db.Float, default=1.0)
+    economy_multiplier = db.Column(db.Float, default=0.8)
+    
+    # Additional fees
+    signature_fee = db.Column(db.Float, default=200.0)  # Fee for signature required
+    
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), 
+                          onupdate=datetime.now(timezone.utc))
+    
+    @classmethod
+    def get_current(cls):
+        """Get the current active pricing configuration"""
+        config = cls.query.filter_by(is_active=True).first()
+        if not config:
+            # Create default config if none exists
+            config = cls()
+            db.session.add(config)
+            db.session.commit()
+        return config

@@ -66,52 +66,6 @@
         margin: 0 auto;
     }
     
-    .booking-steps {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    
-    .step {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        color: var(--light-text);
-        background: var(--light-bg);
-        border-radius: 50px;
-        min-width: 120px;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-    
-    .step.active {
-        color: white;
-        background: var(--primary-blue);
-        font-weight: 600;
-        box-shadow: var(--shadow-md);
-    }
-    
-    .step-number {
-        width: 28px;
-        height: 28px;
-        background: var(--light-bg);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 0.5rem;
-        font-weight: bold;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-    
-    .step.active .step-number {
-        background: white;
-        color: var(--primary-blue);
-    }
-    
     .booking-form-container {
         background: white;
         padding: clamp(1.5rem, 3vw, 2rem);
@@ -136,8 +90,6 @@
         color: var(--primary-blue-dark);
         margin-bottom: 1.5rem;
         font-size: clamp(1.3rem, 2vw, 1.5rem);
-        display: flex;
-        align-items: center;
         font-weight: 700;
         padding-bottom: 0.5rem;
         border-bottom: 2px solid var(--primary-blue);
@@ -183,6 +135,7 @@
         transition: all 0.3s ease;
         background: white;
         color: var(--dark-text);
+        box-sizing: border-box;
     }
     
     .form-control:focus {
@@ -211,8 +164,10 @@
         border-radius: var(--radius-sm);
         font-size: 1rem;
         background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23475569' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right 1rem center;
+        background-size: 12px;
         appearance: none;
         cursor: pointer;
+        box-sizing: border-box;
     }
     
     .checkbox-group {
@@ -233,6 +188,7 @@
         margin-right: 0.8rem;
         width: 18px;
         height: 18px;
+        min-width: 18px;
         cursor: pointer;
     }
     
@@ -241,83 +197,7 @@
         margin-bottom: 0;
         font-weight: 500;
         color: var(--dark-text);
-    }
-    
-    .address-saved {
-        background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
-        padding: 1.5rem;
-        border-radius: var(--radius-md);
-        margin-bottom: 1.5rem;
-        border: 2px solid #BFDBFE;
-        position: relative;
-    }
-    
-    .address-saved::before {
-        content: '✨';
-        position: absolute;
-        top: -10px;
-        right: 15px;
-        font-size: 1.2rem;
-    }
-    
-    .address-saved h4 {
-        margin-bottom: 0.5rem;
-        color: var(--primary-blue-dark);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .use-saved-btn {
-        background: var(--primary-blue);
-        color: white;
-        border: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .use-saved-btn:hover {
-        background: var(--primary-blue-dark);
-        transform: translateY(-1px);
-    }
-    
-    .address-preview {
-        background: white;
-        padding: 1rem;
-        border-radius: var(--radius-sm);
-        margin-top: 1rem;
-        border: 2px solid var(--border-color);
-        display: none;
-        animation: slideDown 0.3s ease;
-    }
-    
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .address-preview h5 {
-        margin: 0 0 0.5rem 0;
-        color: var(--dark-text);
-        font-size: 1rem;
-    }
-    
-    .address-preview p {
-        margin: 0.2rem 0;
-        color: var(--medium-text);
-        font-size: 0.9rem;
+        flex: 1;
     }
     
     .form-actions {
@@ -327,18 +207,13 @@
         padding-top: 2rem;
         border-top: 2px solid var(--light-bg);
         gap: 1rem;
-    }
-    
-    @media (max-width: 480px) {
-        .form-actions {
-            flex-direction: column;
-        }
+        flex-wrap: wrap;
     }
     
     .btn-secondary {
         background: var(--light-text);
         color: white;
-        padding: 1rem 2rem;
+        padding: 1rem 1.5rem;
         border: none;
         border-radius: var(--radius-sm);
         font-size: 1rem;
@@ -351,7 +226,8 @@
         font-weight: 600;
         transition: all 0.3s ease;
         flex: 1;
-        min-width: 140px;
+        min-width: 120px;
+        text-align: center;
     }
     
     .btn-secondary:hover {
@@ -362,7 +238,7 @@
     .btn-primary {
         background: linear-gradient(135deg, var(--secondary-green), #059669);
         color: white;
-        padding: 1rem 2rem;
+        padding: 1rem 1.5rem;
         border: none;
         border-radius: var(--radius-sm);
         font-size: 1rem;
@@ -374,7 +250,7 @@
         justify-content: center;
         gap: 0.5rem;
         flex: 1;
-        min-width: 140px;
+        min-width: 120px;
     }
     
     .btn-primary:hover:not(:disabled) {
@@ -387,6 +263,7 @@
         cursor: not-allowed;
         transform: none;
         box-shadow: none;
+        opacity: 0.7;
     }
     
     .price-estimate {
@@ -415,11 +292,34 @@
         font-size: 1.2rem;
     }
     
-    .price-amount {
+    .price-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .price-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        font-size: 0.95rem;
+    }
+    
+    .price-item:last-child {
+        border-bottom: none;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+    
+    .total-price {
         font-size: clamp(2rem, 4vw, 2.5rem);
         font-weight: 800;
         color: var(--secondary-green);
         text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+        margin: 1rem 0;
     }
     
     .form-note {
@@ -437,21 +337,6 @@
         color: var(--primary-blue);
     }
     
-    .section-subtitle {
-        color: var(--primary-blue);
-        font-size: 1.1rem;
-        margin: 1.5rem 0 1rem;
-        padding-left: 0.5rem;
-        border-left: 4px solid var(--primary-blue);
-    }
-    
-    .loading {
-        display: none;
-        text-align: center;
-        padding: 2rem;
-        color: var(--medium-text);
-    }
-    
     .input-with-icon {
         position: relative;
     }
@@ -462,14 +347,171 @@
         top: 50%;
         transform: translateY(-50%);
         color: var(--light-text);
+        z-index: 1;
     }
     
     .input-with-icon .form-control {
         padding-left: 3rem;
+        width: 100%;
     }
     
-    /* Responsive adjustments */
-    @media (max-width: 480px) {
+    .coordinates-display {
+        font-size: 0.8rem;
+        color: var(--light-text);
+        margin-top: 0.3rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .route-options {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .route-option-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-color);
+        background: white;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 36px;
+    }
+    
+    .route-option-btn.active {
+        background: var(--primary-blue);
+        color: white;
+        border-color: var(--primary-blue);
+    }
+    
+    .route-option-btn:hover:not(.active) {
+        background: var(--light-bg);
+    }
+    
+    .route-details {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--light-bg);
+        border-radius: var(--radius-sm);
+    }
+    
+    .route-info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .info-card {
+        background: white;
+        padding: 1rem;
+        border-radius: var(--radius-sm);
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .info-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary-blue);
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: var(--medium-text);
+    }
+    
+    .static-map {
+        width: 100%;
+        height: 200px;
+        background: var(--light-bg);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        position: relative;
+        margin-top: 1rem;
+    }
+    
+    .static-map img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .map-overlay {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        color: var(--dark-text);
+        backdrop-filter: blur(5px);
+    }
+    
+    /* Loading overlay */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 1000;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--light-bg);
+        border-top-color: var(--primary-blue);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    .api-status {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-sm);
+        background: white;
+        box-shadow: var(--shadow-lg);
+        z-index: 1001;
+        display: none;
+        max-width: 300px;
+    }
+    
+    .api-status.success {
+        border-left: 4px solid var(--secondary-green);
+    }
+    
+    .api-status.error {
+        border-left: 4px solid var(--danger-red);
+    }
+    
+    .api-status.info {
+        border-left: 4px solid var(--primary-blue);
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 640px) {
         .booking-container {
             padding: 0.5rem;
         }
@@ -477,10 +519,13 @@
         .booking-header {
             padding: 1.5rem 1rem;
             margin-bottom: 1.5rem;
+            border-radius: var(--radius-md);
         }
         
         .booking-form-container {
-            padding: 1.5rem 1rem;
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
         }
         
         .form-section {
@@ -489,7 +534,89 @@
         }
         
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-control,
+        .form-select {
+            padding: 0.85rem 0.75rem;
+            font-size: 16px; /* Prevents iOS zoom */
+        }
+        
+        .input-with-icon i {
+            left: 0.75rem;
+        }
+        
+        .input-with-icon .form-control {
+            padding-left: 2.5rem;
+        }
+        
+        .price-estimate {
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        
+        .route-info-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .info-card {
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+        }
+        
+        .static-map {
+            height: 150px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+        }
+        
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1rem;
+        }
+        
+        .price-item {
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        
+        .total-price {
+            font-size: 1.8rem;
+        }
+        
+        .checkbox-group {
+            padding: 0.5rem;
+        }
+        
+        .checkbox-group label {
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .booking-container {
+            padding: 0.25rem;
+        }
+        
+        .booking-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
         }
         
         .form-control,
@@ -497,22 +624,66 @@
             padding: 0.8rem;
         }
         
-        .btn-primary,
-        .btn-secondary {
-            padding: 0.8rem 1rem;
-            width: 100%;
+        .route-info-grid {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+        
+        .route-options {
+            justify-content: center;
+        }
+        
+        .route-option-btn {
+            flex: 1;
+            min-width: 90px;
+            justify-content: center;
+        }
+        
+        .price-estimate {
+            padding: 1rem;
+        }
+        
+        .api-status {
+            left: 10px;
+            right: 10px;
+            top: 10px;
+            max-width: none;
         }
     }
     
     /* Animation for form submission */
     @keyframes pulse {
         0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+        50% { transform: scale(1.02); }
         100% { transform: scale(1); }
     }
     
     .submitting {
         animation: pulse 1s infinite;
+    }
+    
+    /* Address card styling */
+    .address-card {
+        background: white;
+        padding: 1rem;
+        border-radius: var(--radius-sm);
+        margin-top: 0.5rem;
+        border: 2px solid var(--secondary-green);
+    }
+    
+    .address-card h6 {
+        margin: 0 0 0.5rem 0;
+        color: var(--secondary-green);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .address-text {
+        color: var(--dark-text);
+        font-size: 0.9rem;
+        line-height: 1.4;
     }
 </style>
 
@@ -527,93 +698,118 @@
         <div class="form-section">
             <h2 class="section-title">📍 Address Information</h2>
             
-            {% if current_user.is_authenticated and user_addresses %}
-            <div class="address-saved">
-                <h4><i class="fas fa-bookmark"></i> Quick Address Fill</h4>
-                <p>Use a saved address:</p>
-                <select class="form-select" id="saved-address-select">
-                    <option value="">Choose from saved addresses...</option>
-                    {% for address in user_addresses %}
-                    <option value="{{ address.id }}">{{ address.contact_name }} - {{ address.address_line1 }}</option>
-                    {% endfor %}
-                </select>
-                <div class="address-preview" id="address-preview">
-                    <h5>Selected Address Preview:</h5>
-                    <p id="preview-contact"></p>
-                    <p id="preview-address"></p>
-                    <p id="preview-city"></p>
-                    <p id="preview-phone"></p>
-                    <button type="button" class="use-saved-btn" onclick="useSelectedAddress()">
-                        <i class="fas fa-check"></i> Use This Address
-                    </button>
+            <!-- Pickup Address -->
+            <div class="form-group">
+                <label for="pickup_address" class="required">Pickup Address</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input type="text" id="pickup_address" name="pickup_address" class="form-control" 
+                           required placeholder="Enter full pickup address" 
+                           autocomplete="off">
+                </div>
+                <div class="error-message" id="pickup_address_error"></div>
+                <div id="pickup-coordinates" class="coordinates-display" style="display: none;">
+                    <span>Lat: <span id="pickup-lat">--</span></span>
+                    <span>Lng: <span id="pickup-lng">--</span></span>
+                </div>
+                <div id="pickup-geocode-result" class="address-card" style="display: none;">
+                    <h6><i class="fas fa-check-circle"></i> Verified Address</h6>
+                    <div class="address-text" id="pickup-verified-address"></div>
                 </div>
             </div>
-            {% endif %}
             
-            <h3 class="section-subtitle">📤 Pickup Details</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="pickup_address" class="required">Full Address</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-map-pin"></i>
-                        <input type="text" id="pickup_address" name="pickup_address" class="form-control" required
-                               placeholder="Street, City, State, ZIP">
+            <!-- Delivery Address -->
+            <div class="form-group">
+                <label for="delivery_address" class="required">Delivery Address</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-flag-checkered"></i>
+                    <input type="text" id="delivery_address" name="delivery_address" class="form-control" 
+                           required placeholder="Enter full delivery address" 
+                           autocomplete="off">
+                </div>
+                <div class="error-message" id="delivery_address_error"></div>
+                <div id="delivery-coordinates" class="coordinates-display" style="display: none;">
+                    <span>Lat: <span id="delivery-lat">--</span></span>
+                    <span>Lng: <span id="delivery-lng">--</span></span>
+                </div>
+                <div id="delivery-geocode-result" class="address-card" style="display: none;">
+                    <h6><i class="fas fa-check-circle"></i> Verified Address</h6>
+                    <div class="address-text" id="delivery-verified-address"></div>
+                </div>
+            </div>
+            
+            <!-- Route Options -->
+            <div class="route-options" id="route-options" style="display: none;">
+                <button type="button" class="route-option-btn active" data-mode="driving">
+                    <i class="fas fa-car"></i> Driving
+                </button>
+                <button type="button" class="route-option-btn" data-mode="walking">
+                    <i class="fas fa-walking"></i> Walking
+                </button>
+                <button type="button" class="route-option-btn" data-mode="bicycling">
+                    <i class="fas fa-bicycle"></i> Bicycling
+                </button>
+            </div>
+            
+            <!-- Route Information -->
+            <div class="route-details" id="route-details" style="display: none;">
+                <h5><i class="fas fa-route"></i> Route Details</h5>
+                
+                <div class="route-info-grid">
+                    <div class="info-card">
+                        <div class="info-value" id="distance-value">-- km</div>
+                        <div class="info-label">Distance</div>
                     </div>
-                    <div class="error-message" id="pickup_address_error"></div>
+                    <div class="info-card">
+                        <div class="info-value" id="duration-value">--</div>
+                        <div class="info-label">Duration</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-value" id="base-price-value">₦ --</div>
+                        <div class="info-label">Base Fare</div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="pickup_contact" class="required">Contact Name</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="pickup_contact" name="pickup_contact" class="form-control" required
-                               placeholder="Contact person name">
+                <!-- Static Map Image -->
+                <div class="static-map" id="static-map">
+                    <div class="map-overlay">
+                        <i class="fas fa-map"></i> Route Preview
                     </div>
+                    <img id="map-image" src="" alt="Route Map" style="display: none;">
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="pickup_contact" class="required">Pickup Contact</label>
+                    <input type="text" id="pickup_contact" name="pickup_contact" class="form-control" 
+                           required placeholder="Contact person name">
                     <div class="error-message" id="pickup_contact_error"></div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="pickup_phone" class="required">Phone Number</label>
-                <div class="input-with-icon">
-                    <i class="fas fa-phone"></i>
-                    <input type="tel" id="pickup_phone" name="pickup_phone" class="form-control" required
-                           placeholder="080 123 4567">
-                </div>
-                <div class="error-message" id="pickup_phone_error"></div>
-            </div>
-            
-            <h3 class="section-subtitle">📥 Delivery Details</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="delivery_address" class="required">Full Address</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <input type="text" id="delivery_address" name="delivery_address" class="form-control" required
-                               placeholder="Street, City, State, ZIP">
-                    </div>
-                    <div class="error-message" id="delivery_address_error"></div>
-                </div>
                 
                 <div class="form-group">
-                    <label for="delivery_contact" class="required">Contact Name</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="delivery_contact" name="delivery_contact" class="form-control" required
-                               placeholder="Contact person name">
-                    </div>
+                    <label for="delivery_contact" class="required">Delivery Contact</label>
+                    <input type="text" id="delivery_contact" name="delivery_contact" class="form-control" 
+                           required placeholder="Contact person name">
                     <div class="error-message" id="delivery_contact_error"></div>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="delivery_phone" class="required">Phone Number</label>
-                <div class="input-with-icon">
-                    <i class="fas fa-phone"></i>
-                    <input type="tel" id="delivery_phone" name="delivery_phone" class="form-control" required
-                           placeholder="080 123 4567">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="pickup_phone" class="required">Pickup Phone</label>
+                    <input type="tel" id="pickup_phone" name="pickup_phone" class="form-control" 
+                           required placeholder="080 123 4567" inputmode="numeric">
+                    <div class="error-message" id="pickup_phone_error"></div>
                 </div>
-                <div class="error-message" id="delivery_phone_error"></div>
+                
+                <div class="form-group">
+                    <label for="delivery_phone" class="required">Delivery Phone</label>
+                    <input type="tel" id="delivery_phone" name="delivery_phone" class="form-control" 
+                           required placeholder="080 123 4567" inputmode="numeric">
+                    <div class="error-message" id="delivery_phone_error"></div>
+                </div>
             </div>
         </div>
         
@@ -643,7 +839,7 @@
                     <div class="input-with-icon">
                         <i class="fas fa-weight-hanging"></i>
                         <input type="number" id="weight" name="weight" class="form-control" required
-                               min="0.1" max="1000" step="0.1" placeholder="e.g., 5.5" value="1">
+                               min="0.1" max="1000" step="0.1" placeholder="e.g., 5.5" value="1" inputmode="decimal">
                     </div>
                     <div class="error-message" id="weight_error"></div>
                 </div>
@@ -665,7 +861,7 @@
                     <div class="input-with-icon">
                         <i class="fas fa-tag"></i>
                         <input type="number" id="package_value" name="package_value" class="form-control"
-                               min="0" placeholder="Value for insurance">
+                               min="0" placeholder="Value for insurance" inputmode="decimal">
                     </div>
                     <div class="error-message" id="package_value_error"></div>
                 </div>
@@ -714,66 +910,137 @@
             
             <div class="checkbox-group">
                 <input type="checkbox" id="signature_required" name="signature_required" value="1">
-                <label for="signature_required">Require signature upon delivery</label>
+                <label for="signature_required">Require signature upon delivery (+₦{{ config.SIGNATURE_FEE or '200' }})</label>
             </div>
         </div>
         
         <!-- Price Estimate -->
         <div class="price-estimate">
-            <h4>💰 Estimated Cost</h4>
-            <div class="price-amount" id="estimated-price">₦9.99</div>
-            <p class="form-note">
-                <i class="fas fa-info-circle"></i> Final price may vary based on exact weight and dimensions
-            </p>
+            <h4>💰 Price Calculation</h4>
+            
+            <div class="price-breakdown" id="price-breakdown">
+                <div class="price-item">
+                    <span>Distance Charge (<span id="distance-km">0</span> km × ₦<span id="price-per-km">{{ config.PRICE_PER_KM or '200' }}</span>):</span>
+                    <span id="distance-charge">₦ 0.00</span>
+                </div>
+                <div class="price-item">
+                    <span>Weight Surcharge (<span id="weight-value">0</span> kg):</span>
+                    <span id="weight-charge">₦ 0.00</span>
+                </div>
+                <div class="price-item">
+                    <span>Service Type (<span id="service-type-label">Standard</span>):</span>
+                    <span id="service-charge">₦ 0.00</span>
+                </div>
+                <div class="price-item">
+                    <span>Insurance:</span>
+                    <span id="insurance-charge">₦ 0.00</span>
+                </div>
+                <div class="price-item">
+                    <span>Signature Required:</span>
+                    <span id="signature-charge">₦ 0.00</span>
+                </div>
+                <div class="price-item">
+                    <span>Minimum Price Adjustment:</span>
+                    <span id="minimum-adjustment">₦ 0.00</span>
+                </div>
+                <div class="price-item" style="border-top: 2px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem;">
+                    <span><strong>Total Estimated Cost:</strong></span>
+                    <span><strong id="total-price">₦ --</strong></span>
+                </div>
+            </div>
+            
+            <div class="total-price" id="total-price-display">₦ --</div>
+            
+            <div id="price-disclaimer" class="form-note">
+                <i class="fas fa-info-circle"></i> 
+                <span id="pricing-info">
+                    Distance-based pricing: ₦{{ config.PRICE_PER_KM or '200' }} per km (minimum ₦{{ config.MINIMUM_DELIVERY_PRICE or '500' }})
+                </span>
+            </div>
         </div>
         
-        <!-- Hidden field for amount -->
-        <input type="hidden" id="amount" name="amount" value="9.99">
+        <!-- Hidden fields -->
+        <input type="hidden" id="amount" name="amount" value="">
+        <input type="hidden" id="distance_km" name="distance_km" value="">
+        <input type="hidden" id="duration_seconds" name="duration_seconds" value="">
+        <input type="hidden" id="origin_lat" name="origin_lat" value="">
+        <input type="hidden" id="origin_lng" name="origin_lng" value="">
+        <input type="hidden" id="dest_lat" name="dest_lat" value="">
+        <input type="hidden" id="dest_lng" name="dest_lng" value="">
+        <input type="hidden" id="travel_mode" name="travel_mode" value="driving">
         
         <!-- Form Actions -->
         <div class="form-actions">
             <a href="{{ url_for('index') }}" class="btn-secondary">
                 <i class="fas fa-times"></i> Cancel
             </a>
-            <button type="submit" class="btn-primary" id="submit-btn">
+            <button type="submit" class="btn-primary" id="submit-btn" disabled>
                 <i class="fas fa-paper-plane"></i> Book Delivery Now
             </button>
         </div>
     </form>
 </div>
 
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <p style="margin-top: 1rem; color: var(--dark-text);" id="loading-text">Calculating route...</p>
+</div>
+
+<!-- API Status Messages -->
+<div class="api-status" id="api-status"></div>
+
 <script>
-    // Base prices
-    const basePrices = {
-        'express': 19.99,
-        'standard': 9.99,
-        'economy': 4.99
+    // Pricing configuration from server
+    const PRICING_CONFIG = {
+        pricePerKm: {{ config.PRICE_PER_KM or 200 }},
+        minimumPrice: {{ config.MINIMUM_DELIVERY_PRICE or 500 }},
+        weightSurcharge: {{ config.WEIGHT_SURCHARGE_PER_KG or 1.5 }},
+        heavySurcharge: {{ config.HEAVY_SURCHARGE_PER_KG or 2.0 }},
+        insuranceRate: {{ config.INSURANCE_RATE or 0.02 }},
+        expressMultiplier: {{ config.EXPRESS_MULTIPLIER or 1.5 }},
+        standardMultiplier: {{ config.STANDARD_MULTIPLIER or 1.0 }},
+        economyMultiplier: {{ config.ECONOMY_MULTIPLIER or 0.8 }},
+        signatureFee: {{ config.SIGNATURE_FEE or 200 }}
     };
     
-    // Update price estimate
-    function updatePriceEstimate() {
-        const serviceType = document.getElementById('service_type').value;
-        const weight = parseFloat(document.getElementById('weight').value) || 0;
-        const packageValue = parseFloat(document.getElementById('package_value').value) || 0;
-        const insuranceChecked = document.getElementById('insurance_required').checked;
+    // Global variables
+    let currentRouteData = null;
+    let currentMode = 'driving';
+    
+    // Debounce function
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    // Show/hide loading
+    function showLoading(text = 'Calculating...') {
+        document.getElementById('loading-text').textContent = text;
+        document.getElementById('loading-overlay').style.display = 'flex';
+    }
+    
+    function hideLoading() {
+        document.getElementById('loading-overlay').style.display = 'none';
+    }
+    
+    // Show API status message
+    function showApiStatus(message, type = 'info') {
+        const statusDiv = document.getElementById('api-status');
+        statusDiv.textContent = message;
+        statusDiv.className = `api-status ${type}`;
+        statusDiv.style.display = 'block';
         
-        let total = basePrices[serviceType] || 9.99;
-        
-        // Weight charges
-        if (weight > 5) total += (weight - 5) * 1.5;
-        if (weight > 20) total += (weight - 20) * 2;
-        
-        // Insurance (2% of declared value)
-        if (insuranceChecked && packageValue > 0) {
-            total += packageValue * 0.02;
-        }
-        
-        // Update display with animation
-        const priceElement = document.getElementById('estimated-price');
-        priceElement.textContent = '₦' + total.toFixed(2);
-        
-        // Update hidden amount field
-        document.getElementById('amount').value = total.toFixed(2);
+        setTimeout(() => {
+            statusDiv.style.display = 'none';
+        }, 5000);
     }
     
     // Validation functions
@@ -790,7 +1057,7 @@
     }
     
     function validateAddress(address) {
-        return address && address.trim().length >= 10;
+        return address && address.trim().length >= 5;
     }
     
     function validateName(name) {
@@ -798,10 +1065,12 @@
     }
     
     function validateWeight(weight) {
-        return weight && parseFloat(weight) >= 0.1 && parseFloat(weight) <= 1000;
+        const weightNum = parseFloat(weight);
+        return !isNaN(weightNum) && weightNum >= 0.1 && weightNum <= 1000;
     }
     
     function validateDate(date) {
+        if (!date) return false;
         const selectedDate = new Date(date);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -811,74 +1080,285 @@
     function showError(fieldId, message) {
         const field = document.getElementById(fieldId);
         const errorElement = document.getElementById(fieldId + '_error');
-        field.classList.add('error');
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
+        if (field) field.classList.add('error');
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
         return false;
     }
     
     function clearError(fieldId) {
         const field = document.getElementById(fieldId);
         const errorElement = document.getElementById(fieldId + '_error');
-        field.classList.remove('error');
-        errorElement.style.display = 'none';
+        if (field) field.classList.remove('error');
+        if (errorElement) errorElement.style.display = 'none';
         return true;
     }
     
-    // Setup real-time validation
-    function setupValidation() {
-        const fields = [
-            'pickup_address', 'pickup_contact', 'pickup_phone',
-            'delivery_address', 'delivery_contact', 'delivery_phone',
-            'package_type', 'weight', 'service_type', 'pickup_date'
-        ];
+    // Geocode address
+    async function geocodeAddress(address, type) {
+        if (!address || address.length < 5) return null;
         
-        fields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.addEventListener('blur', () => validateField(fieldId));
-                field.addEventListener('input', () => clearError(fieldId));
-            }
-        });
-        
-        // Phone formatting
-        ['pickup_phone', 'delivery_phone'].forEach(phoneId => {
-            document.getElementById(phoneId).addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                
-                if (value.startsWith('234') && value.length <= 13) {
-                    e.target.value = formatPhone(value, '234');
-                } else if (value.startsWith('0') && value.length <= 11) {
-                    e.target.value = formatPhone(value, '0');
-                } else if (value.length > 0 && value.length <= 10) {
-                    e.target.value = '0' + value.substring(0, 3) + ' ' + 
-                                   value.substring(3, 6) + (value.length > 6 ? ' ' + value.substring(6, 10) : '');
-                }
+        try {
+            const response = await fetch('/api/geocode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ address: address })
             });
-        });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Update display
+                const resultDiv = document.getElementById(`${type}-geocode-result`);
+                const addressText = document.getElementById(`${type}-verified-address`);
+                const coordsDiv = document.getElementById(`${type}-coordinates`);
+                const latSpan = document.getElementById(`${type}-lat`);
+                const lngSpan = document.getElementById(`${type}-lng`);
+                
+                if (resultDiv) resultDiv.style.display = 'block';
+                if (addressText) addressText.textContent = data.formatted_address;
+                if (coordsDiv) coordsDiv.style.display = 'flex';
+                if (latSpan) latSpan.textContent = data.latitude.toFixed(6);
+                if (lngSpan) lngSpan.textContent = data.longitude.toFixed(6);
+                
+                showApiStatus(`✅ ${type.charAt(0).toUpperCase() + type.slice(1)} address verified`, 'success');
+                return data;
+            } else {
+                throw new Error(data.error || 'Geocoding failed');
+            }
+        } catch (error) {
+            console.error(`Geocoding error for ${type}:`, error);
+            showApiStatus(`⚠️ Could not verify ${type} address`, 'error');
+            return null;
+        }
     }
     
-    // Format phone number
-    function formatPhone(value, prefix) {
-        if (prefix === '234') {
-            return '+234 ' + value.substring(3, 6) + ' ' + 
-                   value.substring(6, 9) + (value.length > 9 ? ' ' + value.substring(9, 13) : '');
-        } else {
-            return value.substring(0, 4) + ' ' + 
-                   value.substring(4, 7) + (value.length > 7 ? ' ' + value.substring(7, 11) : '');
+    // Calculate route
+    async function calculateRoute() {
+        const pickupAddress = document.getElementById('pickup_address').value.trim();
+        const deliveryAddress = document.getElementById('delivery_address').value.trim();
+        
+        if (!pickupAddress || !deliveryAddress || 
+            pickupAddress.length < 5 || deliveryAddress.length < 5) {
+            hideRouteDisplay();
+            return;
         }
+        
+        showLoading('Calculating optimal route...');
+        
+        try {
+            const response = await fetch('/api/calculate-route', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    origin: pickupAddress,
+                    destination: deliveryAddress,
+                    mode: currentMode
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                currentRouteData = data;
+                updateRouteDisplay(data);
+                updatePriceCalculation();
+                document.getElementById('submit-btn').disabled = false;
+                showApiStatus('✅ Route calculated successfully', 'success');
+                
+                // Generate static map if coordinates exist
+                if (data.origin_coords && data.destination_coords) {
+                    generateStaticMap(data.origin_coords, data.destination_coords);
+                }
+            } else {
+                hideRouteDisplay();
+                showApiStatus(`❌ ${data.error || 'Failed to calculate route'}`, 'error');
+                document.getElementById('submit-btn').disabled = true;
+            }
+        } catch (error) {
+            console.error('Route calculation error:', error);
+            hideRouteDisplay();
+            showApiStatus('❌ Network error. Please try again.', 'error');
+            document.getElementById('submit-btn').disabled = true;
+        } finally {
+            hideLoading();
+        }
+    }
+    
+    // Generate static map image
+    function generateStaticMap(originCoords, destCoords) {
+        if (!originCoords || !destCoords) return;
+        
+        const mapImage = document.getElementById('map-image');
+        if (!mapImage) return;
+        
+        // Use a simple static map service
+        const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?size=600x300&maptype=roadmap` +
+                      `&markers=color:green%7Clabel:P%7C${originCoords.lat},${originCoords.lng}` +
+                      `&markers=color:red%7Clabel:D%7C${destCoords.lat},${destCoords.lng}` +
+                      `&path=color:0x2A5BD7%7Cweight:5%7C${originCoords.lat},${originCoords.lng}%7C${destCoords.lat},${destCoords.lng}` +
+                      `&key={{ config.GOOGLE_MAPS_API_KEY or '' }}`;
+        
+        mapImage.src = mapUrl;
+        mapImage.style.display = 'block';
+        mapImage.onerror = function() {
+            this.style.display = 'none';
+            this.parentElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-text);"><i class="fas fa-map" style="font-size: 2rem; opacity: 0.3;"></i></div>';
+        };
+    }
+    
+    // Update route display
+    function updateRouteDisplay(routeData) {
+        const routeDetails = document.getElementById('route-details');
+        const routeOptions = document.getElementById('route-options');
+        
+        if (routeDetails) routeDetails.style.display = 'block';
+        if (routeOptions) routeOptions.style.display = 'flex';
+        
+        // Update distance
+        const distanceElement = document.getElementById('distance-value');
+        const distanceKmElement = document.getElementById('distance_km');
+        const distanceKmDisplay = document.getElementById('distance-km');
+        
+        if (distanceElement) distanceElement.textContent = `${routeData.driving_distance_text}`;
+        if (distanceKmElement) distanceKmElement.value = routeData.driving_distance_km;
+        if (distanceKmDisplay) distanceKmDisplay.textContent = routeData.driving_distance_km.toFixed(1);
+        
+        // Update duration
+        const durationElement = document.getElementById('duration-value');
+        const durationSecondsElement = document.getElementById('duration_seconds');
+        if (durationElement) durationElement.textContent = routeData.duration_text;
+        if (durationSecondsElement) durationSecondsElement.value = routeData.duration_seconds;
+        
+        // Update base price
+        const basePriceElement = document.getElementById('base-price-value');
+        if (basePriceElement) basePriceElement.textContent = `₦${routeData.base_price.toFixed(2)}`;
+        
+        // Update price per km display
+        const pricePerKmElement = document.getElementById('price-per-km');
+        if (pricePerKmElement) pricePerKmElement.textContent = PRICING_CONFIG.pricePerKm;
+    }
+    
+    // Hide route display
+    function hideRouteDisplay() {
+        const routeDetails = document.getElementById('route-details');
+        const routeOptions = document.getElementById('route-options');
+        if (routeDetails) routeDetails.style.display = 'none';
+        if (routeOptions) routeOptions.style.display = 'none';
+        document.getElementById('submit-btn').disabled = true;
+    }
+    
+    // Update price calculation
+    function updatePriceCalculation() {
+        if (!currentRouteData) return;
+        
+        const weight = parseFloat(document.getElementById('weight').value) || 0;
+        const packageValue = parseFloat(document.getElementById('package_value').value) || 0;
+        const serviceType = document.getElementById('service_type').value || 'standard';
+        const insuranceChecked = document.getElementById('insurance_required').checked;
+        const signatureChecked = document.getElementById('signature_required').checked;
+        
+        // Get distance from route data
+        const distanceKm = currentRouteData.driving_distance_km || 0;
+        
+        // Calculate distance charge
+        let distanceCharge = distanceKm * PRICING_CONFIG.pricePerKm;
+        
+        // Calculate weight surcharge
+        let weightCharge = 0;
+        if (weight > 5) {
+            weightCharge += (weight - 5) * PRICING_CONFIG.weightSurcharge;
+        }
+        if (weight > 20) {
+            weightCharge += (weight - 20) * PRICING_CONFIG.heavySurcharge;
+        }
+        
+        // Calculate service multiplier
+        let serviceMultiplier;
+        let serviceTypeLabel;
+        
+        switch(serviceType) {
+            case 'express':
+                serviceMultiplier = PRICING_CONFIG.expressMultiplier;
+                serviceTypeLabel = 'Express';
+                break;
+            case 'economy':
+                serviceMultiplier = PRICING_CONFIG.economyMultiplier;
+                serviceTypeLabel = 'Economy';
+                break;
+            default:
+                serviceMultiplier = PRICING_CONFIG.standardMultiplier;
+                serviceTypeLabel = 'Standard';
+        }
+        
+        // Calculate service charge (difference from base)
+        const serviceCharge = (distanceCharge * serviceMultiplier) - distanceCharge;
+        const adjustedDistanceCharge = distanceCharge * serviceMultiplier;
+        
+        // Calculate insurance
+        let insuranceCharge = 0;
+        if (insuranceChecked && packageValue > 0) {
+            insuranceCharge = packageValue * PRICING_CONFIG.insuranceRate;
+        }
+        
+        // Calculate signature fee
+        let signatureCharge = signatureChecked ? PRICING_CONFIG.signatureFee : 0;
+        
+        // Calculate total
+        let total = adjustedDistanceCharge + weightCharge + insuranceCharge + signatureCharge;
+        
+        // Apply minimum price adjustment
+        let minimumAdjustment = 0;
+        if (total < PRICING_CONFIG.minimumPrice) {
+            minimumAdjustment = PRICING_CONFIG.minimumPrice - total;
+            total = PRICING_CONFIG.minimumPrice;
+        }
+        
+        // Update breakdown display
+        const updateElement = (id, value) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        };
+        
+        updateElement('distance-charge', `₦${adjustedDistanceCharge.toFixed(2)}`);
+        updateElement('weight-value', weight.toFixed(1));
+        updateElement('weight-charge', `₦${weightCharge.toFixed(2)}`);
+        updateElement('service-type-label', serviceTypeLabel);
+        updateElement('service-charge', `₦${serviceCharge.toFixed(2)}`);
+        updateElement('insurance-charge', `₦${insuranceCharge.toFixed(2)}`);
+        updateElement('signature-charge', `₦${signatureCharge.toFixed(2)}`);
+        updateElement('minimum-adjustment', `₦${minimumAdjustment.toFixed(2)}`);
+        updateElement('total-price', `₦${total.toFixed(2)}`);
+        
+        // Update large total price display
+        const totalDisplay = document.getElementById('total-price-display');
+        if (totalDisplay) totalDisplay.textContent = `₦${total.toFixed(2)}`;
+        
+        // Update hidden amount field
+        const amountField = document.getElementById('amount');
+        if (amountField) amountField.value = total.toFixed(2);
+        
+        return total;
     }
     
     // Validate individual field
     function validateField(fieldId) {
         const field = document.getElementById(fieldId);
+        if (!field) return true;
+        
         const value = field.value.trim();
         
         switch(fieldId) {
             case 'pickup_address':
             case 'delivery_address':
                 if (!validateAddress(value)) {
-                    return showError(fieldId, 'Address must be at least 10 characters');
+                    return showError(fieldId, 'Address must be at least 5 characters');
                 }
                 break;
                 
@@ -924,11 +1404,8 @@
         return clearError(fieldId);
     }
     
-    // Form submission
-    document.getElementById('booking-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        let isValid = true;
+    // Setup real-time validation
+    function setupValidation() {
         const fields = [
             'pickup_address', 'pickup_contact', 'pickup_phone',
             'delivery_address', 'delivery_contact', 'delivery_phone',
@@ -936,91 +1413,379 @@
         ];
         
         fields.forEach(fieldId => {
-            if (!validateField(fieldId)) {
-                isValid = false;
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('blur', () => validateField(fieldId));
+                field.addEventListener('input', () => {
+                    clearError(fieldId);
+                    // Recalculate price if relevant field changes
+                    if (['weight', 'package_value', 'service_type'].includes(fieldId)) {
+                        updatePriceCalculation();
+                    }
+                });
             }
         });
         
-        if (isValid) {
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.classList.add('submitting');
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            
-            this.submit();
-        } else {
-            const firstError = document.querySelector('.error');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-    });
-    
-    // Saved address handling
-    const addressSelect = document.getElementById('saved-address-select');
-    if (addressSelect) {
-        addressSelect.addEventListener('change', function() {
-            const addressId = this.value;
-            if (addressId) {
-                const preview = document.getElementById('address-preview');
-                preview.style.display = 'block';
-                
-                fetch(`/api/address/${addressId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.getElementById('preview-contact').textContent = data.address.contact_name;
-                            document.getElementById('preview-address').textContent = data.address.address_line1;
-                            document.getElementById('preview-city').textContent = `${data.address.city || ''} ${data.address.state || ''}`.trim();
-                            document.getElementById('preview-phone').textContent = data.address.contact_phone;
-                        }
-                    })
-                    .catch(() => {
-                        document.getElementById('preview-contact').textContent = 'Error loading address';
-                    });
+        // Phone formatting
+        ['pickup_phone', 'delivery_phone'].forEach(phoneId => {
+            const phoneField = document.getElementById(phoneId);
+            if (phoneField) {
+                phoneField.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    if (value.startsWith('234') && value.length <= 13) {
+                        e.target.value = formatPhone(value, '234');
+                    } else if (value.startsWith('0') && value.length <= 11) {
+                        e.target.value = formatPhone(value, '0');
+                    } else if (value.length > 0 && value.length <= 10) {
+                        e.target.value = '0' + value.substring(0, 3) + ' ' + 
+                                       value.substring(3, 6) + (value.length > 6 ? ' ' + value.substring(6, 10) : '');
+                    }
+                });
             }
         });
     }
     
-    function useSelectedAddress() {
-        const addressId = document.getElementById('saved-address-select').value;
-        if (addressId) {
-            fetch(`/api/address/${addressId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const addr = data.address;
-                        document.getElementById('pickup_contact').value = addr.contact_name;
-                        document.getElementById('pickup_phone').value = addr.contact_phone;
-                        document.getElementById('pickup_address').value = 
-                            `${addr.address_line1}, ${addr.city}, ${addr.state}`;
-                        
-                        clearError('pickup_contact');
-                        clearError('pickup_phone');
-                        clearError('pickup_address');
-                        
-                        document.getElementById('address-preview').style.display = 'none';
-                    }
-                });
+    // Format phone number
+    function formatPhone(value, prefix) {
+        if (prefix === '234') {
+            return '+234 ' + value.substring(3, 6) + ' ' + 
+                   value.substring(6, 9) + (value.length > 9 ? ' ' + value.substring(9, 13) : '');
+        } else {
+            return value.substring(0, 4) + ' ' + 
+                   value.substring(4, 7) + (value.length > 7 ? ' ' + value.substring(7, 11) : '');
         }
     }
     
-    // Set minimum date
-    const today = new Date().toISOString().split('T')[0];
-    const pickupDateInput = document.getElementById('pickup_date');
-    if (pickupDateInput) {
-        pickupDateInput.value = today;
-        pickupDateInput.min = today;
-    }
-    
-    // Add event listeners for price calculation
-    ['service_type', 'weight', 'package_value'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updatePriceEstimate);
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set minimum date
+        // Initialize submit button
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Book Delivery Now';
+            }
+            
+            // Add this debug helper to check button state
+            submitBtn?.addEventListener('click', function(e) {
+                console.log('Submit button clicked');
+                console.log('Current route data:', currentRouteData);
+                console.log('Form valid:', bookingForm.checkValidity());
+                console.log('Button disabled:', this.disabled);
+            });
+
+        const today = new Date().toISOString().split('T')[0];
+        const pickupDateInput = document.getElementById('pickup_date');
+        if (pickupDateInput) {
+            pickupDateInput.value = today;
+            pickupDateInput.min = today;
+        }
+        
+        // Address input listeners with debounce
+        const pickupInput = document.getElementById('pickup_address');
+        const deliveryInput = document.getElementById('delivery_address');
+        
+        const debouncedGeocode = debounce(async (address, type) => {
+            if (address.length >= 5) {
+                await geocodeAddress(address, type);
+                calculateRoute();
+            } else {
+                // Hide route if address is too short
+                hideRouteDisplay();
+            }
+        }, 1000);
+        
+        if (pickupInput) {
+            pickupInput.addEventListener('input', () => {
+                const address = pickupInput.value.trim();
+                debouncedGeocode(address, 'pickup');
+            });
+        }
+        
+        if (deliveryInput) {
+            deliveryInput.addEventListener('input', () => {
+                const address = deliveryInput.value.trim();
+                debouncedGeocode(address, 'delivery');
+            });
+        }
+        
+        // Route mode selection
+        document.querySelectorAll('.route-option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.route-option-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Update mode and recalculate
+                currentMode = this.dataset.mode;
+                const travelModeField = document.getElementById('travel_mode');
+                if (travelModeField) travelModeField.value = currentMode;
+                calculateRoute();
+            });
+        });
+        
+        // Price calculation listeners
+        ['service_type', 'weight', 'package_value'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', () => {
+                    updatePriceCalculation();
+                });
+                element.addEventListener('change', () => {
+                    updatePriceCalculation();
+                });
+            }
+        });
+        
+        const insuranceCheckbox = document.getElementById('insurance_required');
+        const signatureCheckbox = document.getElementById('signature_required');
+        
+        if (insuranceCheckbox) {
+            insuranceCheckbox.addEventListener('change', () => {
+                updatePriceCalculation();
+            });
+        }
+        
+        if (signatureCheckbox) {
+            signatureCheckbox.addEventListener('change', () => {
+                updatePriceCalculation();
+            });
+        }
+        
+        // Form validation setup
+        setupValidation();
+
+        // Form submission
+        const bookingForm = document.getElementById('booking-form');
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate all required fields
+                let isValid = true;
+                const requiredFields = [
+                    'pickup_address', 'pickup_contact', 'pickup_phone',
+                    'delivery_address', 'delivery_contact', 'delivery_phone',
+                    'package_type', 'weight', 'service_type', 'pickup_date'
+                ];
+                
+                // Clear all errors first
+                requiredFields.forEach(fieldId => clearError(fieldId));
+                
+                // Validate each field
+                requiredFields.forEach(fieldId => {
+                    if (!validateField(fieldId)) {
+                        isValid = false;
+                    }
+                });
+                
+                // Check if route is calculated
+                const hasValidRoute = currentRouteData && currentRouteData.driving_distance_km > 0;
+                
+                if (!isValid) {
+                    showApiStatus('Please fill all required fields correctly', 'error');
+                    
+                    // Find and scroll to first error
+                    const firstError = document.querySelector('.error');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                    return;
+                }
+                
+                if (!hasValidRoute) {
+                    showApiStatus('Please wait for route calculation or check addresses', 'error');
+                    document.getElementById('pickup_address')?.focus();
+                    return;
+                }
+                
+                // Enable button and show loading state
+                const submitBtn = document.getElementById('submit-btn');
+                const originalContent = submitBtn.innerHTML;
+                
+                submitBtn.disabled = true;
+                submitBtn.classList.add('submitting');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                // Create FormData and submit
+                const formData = new FormData(this);
+                
+                // Log for debugging
+                console.log('Submitting form with data:', {
+                    amount: document.getElementById('amount')?.value,
+                    distance: document.getElementById('distance_km')?.value,
+                    hasRoute: !!currentRouteData
+                });
+                
+                // Submit the form via fetch to see errors
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    
+                    if (response.redirected) {
+                        // If redirected, follow the redirect
+                        window.location.href = response.url;
+                        return;
+                    }
+                    
+                    return response.json().then(data => {
+                        if (data.success) {
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            } else {
+                                showApiStatus('Booking successful!', 'success');
+                                // Reset form after successful booking
+                                setTimeout(() => {
+                                    bookingForm.reset();
+                                    window.location.href = "{{ url_for('index') }}";
+                                }, 2000);
+                            }
+                        } else {
+                            throw new Error(data.error || 'Booking failed');
+                        }
+                    }).catch(error => {
+                        // If response is not JSON, try to handle as HTML
+                        if (response.ok) {
+                            // If response is OK but not JSON, assume success
+                            window.location.reload();
+                        } else {
+                            throw error;
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Form submission error:', error);
+                    
+                    // Fallback to traditional form submission
+                    submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Retry';
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalContent;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('submitting');
+                        
+                        // Try traditional submit as fallback
+                        showApiStatus('Trying alternative submission...', 'info');
+                        setTimeout(() => {
+                            bookingForm.submit();
+                        }, 1000);
+                    }, 2000);
+                    
+                    showApiStatus(`Error: ${error.message || 'Please try again'}`, 'error');
+                });
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+        // Also add this function to check form validity periodically:
+        function checkFormValidity() {
+            const submitBtn = document.getElementById('submit-btn');
+            if (!submitBtn) return;
+            
+            // Check all required fields are filled
+            const requiredFields = [
+                'pickup_address', 'pickup_contact', 'pickup_phone',
+                'delivery_address', 'delivery_contact', 'delivery_phone',
+                'package_type', 'weight', 'service_type', 'pickup_date'
+            ];
+            
+            let allFieldsValid = true;
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && field.value.trim() === '') {
+                    allFieldsValid = false;
+                }
+            });
+            
+            // Check route is calculated
+            const hasRoute = currentRouteData && currentRouteData.driving_distance_km > 0;
+            
+            // Enable/disable button
+            submitBtn.disabled = !(allFieldsValid && hasRoute);
+            
+            // Visual feedback
+            if (submitBtn.disabled) {
+                submitBtn.title = hasRoute ? 'Please fill all required fields' : 'Please enter valid addresses for route calculation';
+            } else {
+                submitBtn.title = 'Click to book delivery';
+            }
+        }
+
+        // Call this function whenever form changes
+        function setupFormChangeListeners() {
+            const fieldsToWatch = [
+                'pickup_address', 'pickup_contact', 'pickup_phone',
+                'delivery_address', 'delivery_contact', 'delivery_phone',
+                'package_type', 'weight', 'service_type', 'pickup_date'
+            ];
+            
+            fieldsToWatch.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', checkFormValidity);
+                    field.addEventListener('change', checkFormValidity);
+                    field.addEventListener('blur', checkFormValidity);
+                }
+            });
+            
+            // Also check when route is calculated
+            const originalUpdateRouteDisplay = updateRouteDisplay;
+            updateRouteDisplay = function(routeData) {
+                originalUpdateRouteDisplay(routeData);
+                checkFormValidity();
+            };
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        // Update price per km display
+        const pricePerKmElement = document.getElementById('price-per-km');
+        if (pricePerKmElement) {
+            pricePerKmElement.textContent = PRICING_CONFIG.pricePerKm;
+        }
+        
+        // Update pricing info
+        const pricingInfo = document.getElementById('pricing-info');
+        if (pricingInfo) {
+            pricingInfo.textContent = `Distance-based pricing: ₦${PRICING_CONFIG.pricePerKm} per km (minimum ₦${PRICING_CONFIG.minimumPrice})`;
+        }
+        
+        // Disable submit button initially
+        document.getElementById('submit-btn').disabled = true;
+
+        setupFormChangeListeners();
+            checkFormValidity(); // Initial check
+            
+        // Check form every second (fallback)
+        setInterval(checkFormValidity, 1000);
+
     });
-    document.getElementById('insurance_required').addEventListener('change', updatePriceEstimate);
-    
-    // Initialize
-    setupValidation();
-    updatePriceEstimate();
 </script>
 {% endblock %}
