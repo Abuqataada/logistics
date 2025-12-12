@@ -4,74 +4,126 @@
 
 {% block content %}
 <style>
+    :root {
+        --primary-blue: #2A5BD7;
+        --primary-blue-dark: #1E4BBB;
+        --secondary-green: #10B981;
+        --accent-orange: #F59E0B;
+        --danger-red: #EF4444;
+        --light-bg: #F8FAFC;
+        --dark-text: #1E293B;
+        --medium-text: #475569;
+        --light-text: #94A3B8;
+        --border-color: #E2E8F0;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+        --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+    }
+
     .booking-container {
         max-width: 800px;
         margin: 0 auto;
+        padding: 1rem;
     }
     
     .booking-header {
         text-align: center;
-        padding: 3rem 0;
-        background: linear-gradient(135deg, #3498db, #2c3e50);
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
         color: white;
-        border-radius: 10px;
-        margin-bottom: 3rem;
+        border-radius: var(--radius-lg);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .booking-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
     
     .booking-header h1 {
-        font-size: 2.8rem;
-        margin-bottom: 1rem;
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        position: relative;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .booking-header p {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        opacity: 0.95;
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
     }
     
     .booking-steps {
         display: flex;
         justify-content: center;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
         flex-wrap: wrap;
+        gap: 0.5rem;
     }
     
     .step {
         display: flex;
         align-items: center;
-        margin: 0 1rem;
-        padding: 1rem;
-        color: #7f8c8d;
+        padding: 0.75rem 1rem;
+        color: var(--light-text);
+        background: var(--light-bg);
+        border-radius: 50px;
+        min-width: 120px;
+        justify-content: center;
+        transition: all 0.3s ease;
     }
     
     .step.active {
-        color: #3498db;
+        color: white;
+        background: var(--primary-blue);
         font-weight: 600;
+        box-shadow: var(--shadow-md);
     }
     
     .step-number {
-        width: 30px;
-        height: 30px;
-        background: #ecf0f1;
+        width: 28px;
+        height: 28px;
+        background: var(--light-bg);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-right: 0.5rem;
         font-weight: bold;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
     }
     
     .step.active .step-number {
-        background: #3498db;
-        color: white;
+        background: white;
+        color: var(--primary-blue);
     }
     
     .booking-form-container {
         background: white;
-        padding: 2.5rem;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        margin-bottom: 3rem;
+        padding: clamp(1.5rem, 3vw, 2rem);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 2rem;
     }
     
     .form-section {
-        margin-bottom: 2.5rem;
-        padding-bottom: 2.5rem;
-        border-bottom: 1px solid #eee;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--light-bg);
     }
     
     .form-section:last-child {
@@ -81,22 +133,28 @@
     }
     
     .section-title {
-        color: #2c3e50;
+        color: var(--primary-blue-dark);
         margin-bottom: 1.5rem;
-        font-size: 1.5rem;
+        font-size: clamp(1.3rem, 2vw, 1.5rem);
         display: flex;
         align-items: center;
-    }
-    
-    .section-title i {
-        margin-right: 0.8rem;
-        color: #3498db;
+        font-weight: 700;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-blue);
+        display: inline-block;
     }
     
     .form-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1.5rem;
+    }
+    
+    @media (max-width: 640px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
     }
     
     .form-group {
@@ -106,359 +164,550 @@
     .form-group label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #2c3e50;
-        font-weight: 500;
+        color: var(--dark-text);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    
+    .required::after {
+        content: ' *';
+        color: var(--danger-red);
     }
     
     .form-control {
         width: 100%;
-        padding: 0.8rem 1rem;
-        border: 2px solid #ddd;
-        border-radius: 6px;
+        padding: 0.9rem 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius-sm);
         font-size: 1rem;
-        transition: border-color 0.3s;
+        transition: all 0.3s ease;
+        background: white;
+        color: var(--dark-text);
     }
     
     .form-control:focus {
-        border-color: #3498db;
+        border-color: var(--primary-blue);
         outline: none;
+        box-shadow: 0 0 0 3px rgba(42, 91, 215, 0.1);
     }
     
     .form-control.error {
-        border-color: #e74c3c;
+        border-color: var(--danger-red);
+        background: #FEF2F2;
     }
     
     .error-message {
-        color: #e74c3c;
+        color: var(--danger-red);
         font-size: 0.85rem;
         margin-top: 0.3rem;
         display: none;
+        font-weight: 500;
     }
     
     .form-select {
         width: 100%;
-        padding: 0.8rem 1rem;
-        border: 2px solid #ddd;
-        border-radius: 6px;
+        padding: 0.9rem 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius-sm);
         font-size: 1rem;
-        background: white;
+        background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23475569' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat right 1rem center;
+        appearance: none;
+        cursor: pointer;
     }
     
     .checkbox-group {
         display: flex;
         align-items: center;
         margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: var(--light-bg);
+        border-radius: var(--radius-sm);
+        transition: background-color 0.3s ease;
+    }
+    
+    .checkbox-group:hover {
+        background: #EFF6FF;
     }
     
     .checkbox-group input {
         margin-right: 0.8rem;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    
+    .checkbox-group label {
+        cursor: pointer;
+        margin-bottom: 0;
+        font-weight: 500;
+        color: var(--dark-text);
     }
     
     .address-saved {
-        background: #e8f4fc;
-        padding: 1rem;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-        border-left: 4px solid #3498db;
+        background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1.5rem;
+        border: 2px solid #BFDBFE;
+        position: relative;
+    }
+    
+    .address-saved::before {
+        content: '✨';
+        position: absolute;
+        top: -10px;
+        right: 15px;
+        font-size: 1.2rem;
     }
     
     .address-saved h4 {
         margin-bottom: 0.5rem;
-        color: #2c3e50;
+        color: var(--primary-blue-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
     .use-saved-btn {
-        background: #3498db;
+        background: var(--primary-blue);
         color: white;
         border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
+        padding: 0.6rem 1.2rem;
+        border-radius: var(--radius-sm);
         cursor: pointer;
-        margin-top: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .use-saved-btn:hover {
+        background: var(--primary-blue-dark);
+        transform: translateY(-1px);
     }
     
     .address-preview {
-        background: #f8f9fa;
+        background: white;
         padding: 1rem;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         margin-top: 1rem;
-        border: 1px solid #ddd;
+        border: 2px solid var(--border-color);
         display: none;
+        animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     .address-preview h5 {
         margin: 0 0 0.5rem 0;
-        color: #2c3e50;
+        color: var(--dark-text);
+        font-size: 1rem;
     }
     
     .address-preview p {
         margin: 0.2rem 0;
-        color: #34495e;
+        color: var(--medium-text);
+        font-size: 0.9rem;
     }
     
     .form-actions {
         display: flex;
         justify-content: space-between;
-        margin-top: 3rem;
+        margin-top: 2rem;
         padding-top: 2rem;
-        border-top: 1px solid #eee;
+        border-top: 2px solid var(--light-bg);
+        gap: 1rem;
+    }
+    
+    @media (max-width: 480px) {
+        .form-actions {
+            flex-direction: column;
+        }
     }
     
     .btn-secondary {
-        background: #95a5a6;
+        background: var(--light-text);
         color: white;
-        padding: 0.8rem 1.5rem;
+        padding: 1rem 2rem;
         border: none;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         font-size: 1rem;
         cursor: pointer;
         text-decoration: none;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        flex: 1;
+        min-width: 140px;
+    }
+    
+    .btn-secondary:hover {
+        background: var(--medium-text);
+        transform: translateY(-1px);
     }
     
     .btn-primary {
-        background: #3498db;
+        background: linear-gradient(135deg, var(--secondary-green), #059669);
         color: white;
-        padding: 0.8rem 2rem;
+        padding: 1rem 2rem;
         border: none;
-        border-radius: 6px;
+        border-radius: var(--radius-sm);
         font-size: 1rem;
         cursor: pointer;
-        font-weight: 600;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 140px;
     }
     
-    .btn-primary:hover {
-        background: #2980b9;
+    .btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
     
     .btn-primary:disabled {
-        background: #bdc3c7;
+        background: var(--light-text);
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
     }
     
     .price-estimate {
-        background: #f8f9fa;
+        background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
         padding: 1.5rem;
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         margin-top: 2rem;
-        border-left: 4px solid #2ecc71;
+        border: 2px solid #86EFAC;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .price-estimate::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--secondary-green), #059669);
     }
     
     .price-estimate h4 {
-        color: #2c3e50;
+        color: var(--dark-text);
         margin-bottom: 1rem;
+        font-size: 1.2rem;
     }
     
     .price-amount {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #2ecc71;
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        font-weight: 800;
+        color: var(--secondary-green);
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
     .form-note {
-        color: #7f8c8d;
-        font-size: 0.9rem;
+        color: var(--medium-text);
+        font-size: 0.85rem;
         margin-top: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
     }
     
-    /* Make checkbox labels clickable */
-    .checkbox-group label {
-        cursor: pointer;
-        margin-bottom: 0;
+    .form-note i {
+        position: absolute;
+        left: 0;
+        top: 0.2rem;
+        color: var(--primary-blue);
+    }
+    
+    .section-subtitle {
+        color: var(--primary-blue);
+        font-size: 1.1rem;
+        margin: 1.5rem 0 1rem;
+        padding-left: 0.5rem;
+        border-left: 4px solid var(--primary-blue);
     }
     
     .loading {
         display: none;
         text-align: center;
-        padding: 1rem;
-        color: #7f8c8d;
+        padding: 2rem;
+        color: var(--medium-text);
+    }
+    
+    .input-with-icon {
+        position: relative;
+    }
+    
+    .input-with-icon i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--light-text);
+    }
+    
+    .input-with-icon .form-control {
+        padding-left: 3rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+        .booking-container {
+            padding: 0.5rem;
+        }
+        
+        .booking-header {
+            padding: 1.5rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .booking-form-container {
+            padding: 1.5rem 1rem;
+        }
+        
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-control,
+        .form-select {
+            padding: 0.8rem;
+        }
+        
+        .btn-primary,
+        .btn-secondary {
+            padding: 0.8rem 1rem;
+            width: 100%;
+        }
+    }
+    
+    /* Animation for form submission */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .submitting {
+        animation: pulse 1s infinite;
     }
 </style>
 
 <div class="booking-container">
     <div class="booking-header">
-        <h1>Book a Delivery</h1>
-        <p>Fill out the form below to schedule your shipment</p>
-    </div>
-    
-    <div class="booking-steps">
-        <div class="step active">
-            <div class="step-number">1</div>
-            <span>Addresses</span>
-        </div>
-        <div class="step">
-            <div class="step-number">2</div>
-            <span>Package Details</span>
-        </div>
-        <div class="step">
-            <div class="step-number">3</div>
-            <span>Review & Pay</span>
-        </div>
+        <h1>📦 Book Your Delivery</h1>
+        <p>Quick, reliable logistics service across Nigeria</p>
     </div>
     
     <form method="POST" action="{{ url_for('book_delivery') }}" class="booking-form-container" id="booking-form" novalidate>
         <!-- Address Section -->
         <div class="form-section">
-            <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Pickup & Delivery Addresses</h2>
+            <h2 class="section-title">📍 Address Information</h2>
             
             {% if current_user.is_authenticated and user_addresses %}
             <div class="address-saved">
-                <h4><i class="fas fa-save"></i> Use Saved Address</h4>
-                <p>You have {{ user_addresses|length }} saved addresses. Select one below:</p>
+                <h4><i class="fas fa-bookmark"></i> Quick Address Fill</h4>
+                <p>Use a saved address:</p>
                 <select class="form-select" id="saved-address-select">
-                    <option value="">Select saved address...</option>
+                    <option value="">Choose from saved addresses...</option>
                     {% for address in user_addresses %}
                     <option value="{{ address.id }}">{{ address.contact_name }} - {{ address.address_line1 }}</option>
                     {% endfor %}
                 </select>
                 <div class="address-preview" id="address-preview">
-                    <h5>Selected Address:</h5>
+                    <h5>Selected Address Preview:</h5>
                     <p id="preview-contact"></p>
                     <p id="preview-address"></p>
                     <p id="preview-city"></p>
                     <p id="preview-phone"></p>
-                    <button type="button" class="use-saved-btn" onclick="useSelectedAddress()">Use This Address</button>
+                    <button type="button" class="use-saved-btn" onclick="useSelectedAddress()">
+                        <i class="fas fa-check"></i> Use This Address
+                    </button>
                 </div>
             </div>
             {% endif %}
             
+            <h3 class="section-subtitle">📤 Pickup Details</h3>
             <div class="form-grid">
-                <div>
-                    <h3 style="color: #3498db; margin-bottom: 1rem;">Pickup Address</h3>
-                    <div class="form-group">
-                        <label for="pickup_address">Full Address *</label>
+                <div class="form-group">
+                    <label for="pickup_address" class="required">Full Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-map-pin"></i>
                         <input type="text" id="pickup_address" name="pickup_address" class="form-control" required
-                               placeholder="Street address, city, state, ZIP">
-                        <div class="error-message" id="pickup_address_error"></div>
+                               placeholder="Street, City, State, ZIP">
                     </div>
-                    <div class="form-group">
-                        <label for="pickup_contact">Contact Name *</label>
-                        <input type="text" id="pickup_contact" name="pickup_contact" class="form-control" required
-                               placeholder="Name of contact person">
-                        <div class="error-message" id="pickup_contact_error"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="pickup_phone">Contact Phone *</label>
-                        <input type="tel" id="pickup_phone" name="pickup_phone" class="form-control" required
-                               placeholder="Phone number (e.g., 123-456-7890)">
-                        <div class="error-message" id="pickup_phone_error"></div>
-                    </div>
+                    <div class="error-message" id="pickup_address_error"></div>
                 </div>
                 
-                <div>
-                    <h3 style="color: #2ecc71; margin-bottom: 1rem;">Delivery Address</h3>
-                    <div class="form-group">
-                        <label for="delivery_address">Full Address *</label>
-                        <input type="text" id="delivery_address" name="delivery_address" class="form-control" required
-                               placeholder="Street address, city, state, ZIP">
-                        <div class="error-message" id="delivery_address_error"></div>
+                <div class="form-group">
+                    <label for="pickup_contact" class="required">Contact Name</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="pickup_contact" name="pickup_contact" class="form-control" required
+                               placeholder="Contact person name">
                     </div>
-                    <div class="form-group">
-                        <label for="delivery_contact">Contact Name *</label>
-                        <input type="text" id="delivery_contact" name="delivery_contact" class="form-control" required
-                               placeholder="Name of contact person">
-                        <div class="error-message" id="delivery_contact_error"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="delivery_phone">Contact Phone *</label>
-                        <input type="tel" id="delivery_phone" name="delivery_phone" class="form-control" required
-                               placeholder="Phone number (e.g., 123-456-7890)">
-                        <div class="error-message" id="delivery_phone_error"></div>
-                    </div>
+                    <div class="error-message" id="pickup_contact_error"></div>
                 </div>
             </div>
             
-            {% if current_user.is_authenticated %}
-            <div class="checkbox-group">
-                <input type="checkbox" id="save_addresses" name="save_addresses" value="1">
-                <label for="save_addresses">Save these addresses to my account</label>
+            <div class="form-group">
+                <label for="pickup_phone" class="required">Phone Number</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="pickup_phone" name="pickup_phone" class="form-control" required
+                           placeholder="080 123 4567">
+                </div>
+                <div class="error-message" id="pickup_phone_error"></div>
             </div>
-            {% endif %}
+            
+            <h3 class="section-subtitle">📥 Delivery Details</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="delivery_address" class="required">Full Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="delivery_address" name="delivery_address" class="form-control" required
+                               placeholder="Street, City, State, ZIP">
+                    </div>
+                    <div class="error-message" id="delivery_address_error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delivery_contact" class="required">Contact Name</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="delivery_contact" name="delivery_contact" class="form-control" required
+                               placeholder="Contact person name">
+                    </div>
+                    <div class="error-message" id="delivery_contact_error"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="delivery_phone" class="required">Phone Number</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="delivery_phone" name="delivery_phone" class="form-control" required
+                           placeholder="080 123 4567">
+                </div>
+                <div class="error-message" id="delivery_phone_error"></div>
+            </div>
         </div>
         
         <!-- Package Details Section -->
         <div class="form-section">
-            <h2 class="section-title"><i class="fas fa-box"></i> Package Details</h2>
+            <h2 class="section-title">📦 Package Information</h2>
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="package_type">Package Type *</label>
+                    <label for="package_type" class="required">Package Type</label>
                     <select id="package_type" name="package_type" class="form-select" required>
-                        <option value="">Select type...</option>
-                        <option value="document">Document</option>
-                        <option value="parcel">Parcel</option>
-                        <option value="small_box">Small Box</option>
-                        <option value="medium_box">Medium Box</option>
-                        <option value="large_box">Large Box</option>
-                        <option value="pallet">Pallet</option>
-                        <option value="fragile">Fragile Item</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="clothing">Clothing</option>
-                        <option value="other">Other</option>
+                        <option value="">Select package type...</option>
+                        <option value="document">📄 Document</option>
+                        <option value="parcel">📦 Parcel</option>
+                        <option value="small_box">📦 Small Box</option>
+                        <option value="medium_box">📦 Medium Box</option>
+                        <option value="large_box">📦 Large Box</option>
+                        <option value="electronics">💻 Electronics</option>
+                        <option value="fragile">⚠️ Fragile Items</option>
+                        <option value="other">📦 Other</option>
                     </select>
                     <div class="error-message" id="package_type_error"></div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="weight">Weight (kg) *</label>
-                    <input type="number" id="weight" name="weight" class="form-control" required
-                           min="0.1" max="1000" step="0.1" placeholder="e.g., 5.5" value="1">
+                    <label for="weight" class="required">Weight (kg)</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-weight-hanging"></i>
+                        <input type="number" id="weight" name="weight" class="form-control" required
+                               min="0.1" max="1000" step="0.1" placeholder="e.g., 5.5" value="1">
+                    </div>
                     <div class="error-message" id="weight_error"></div>
                 </div>
             </div>
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="dimensions">Dimensions (L×W×H in cm)</label>
-                    <input type="text" id="dimensions" name="dimensions" class="form-control"
-                           placeholder="e.g., 30×20×15">
+                    <label for="dimensions">Dimensions (cm)</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-ruler-combined"></i>
+                        <input type="text" id="dimensions" name="dimensions" class="form-control"
+                               placeholder="L × W × H (e.g., 30×20×15)">
+                    </div>
                     <div class="error-message" id="dimensions_error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="package_value">Declared Value (₦)</label>
-                    <input type="number" id="package_value" name="package_value" class="form-control"
-                           min="0" step="0.01" placeholder="Value for insurance">
+                    <div class="input-with-icon">
+                        <i class="fas fa-tag"></i>
+                        <input type="number" id="package_value" name="package_value" class="form-control"
+                               min="0" placeholder="Value for insurance">
+                    </div>
                     <div class="error-message" id="package_value_error"></div>
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="special_instructions">Special Instructions</label>
-                <textarea id="special_instructions" name="special_instructions" class="form-control"
-                          rows="3" placeholder="Any special handling requirements..."></textarea>
+                <div class="input-with-icon">
+                    <i class="fas fa-sticky-note"></i>
+                    <textarea id="special_instructions" name="special_instructions" class="form-control"
+                              rows="2" placeholder="Special handling requirements..."></textarea>
+                </div>
             </div>
             
             <div class="checkbox-group">
                 <input type="checkbox" id="insurance_required" name="insurance_required" value="1">
                 <label for="insurance_required">Add insurance to my shipment</label>
             </div>
-            
-            <p class="form-note">
-                <i class="fas fa-info-circle"></i> Insurance adds 2% of declared value to the total cost.
-            </p>
         </div>
         
         <!-- Service Options -->
         <div class="form-section">
-            <h2 class="section-title"><i class="fas fa-shipping-fast"></i> Service Options</h2>
+            <h2 class="section-title">⚡ Service Options</h2>
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="service_type">Delivery Speed *</label>
+                    <label for="service_type" class="required">Delivery Speed</label>
                     <select id="service_type" name="service_type" class="form-select" required>
                         <option value="">Select delivery speed...</option>
-                        <option value="express">Express (Same/Next Day) - ₦19.99</option>
-                        <option value="standard" selected>Standard (2-3 Days) - ₦9.99</option>
-                        <option value="economy">Economy (4-7 Days) - ₦4.99</option>
+                        <option value="express">🚀 Express (Same/Next Day)</option>
+                        <option value="standard" selected>📦 Standard (2-3 Days)</option>
+                        <option value="economy">🐢 Economy (4-7 Days)</option>
                     </select>
                     <div class="error-message" id="service_type_error"></div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="pickup_date">Preferred Pickup Date *</label>
-                    <input type="date" id="pickup_date" name="pickup_date" class="form-control" required
-                           value="{{ now.strftime('%Y-%m-%d') if now else '' }}">
+                    <label for="pickup_date" class="required">Pickup Date</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="pickup_date" name="pickup_date" class="form-control" required>
+                    </div>
                     <div class="error-message" id="pickup_date_error"></div>
                 </div>
             </div>
@@ -467,18 +716,15 @@
                 <input type="checkbox" id="signature_required" name="signature_required" value="1">
                 <label for="signature_required">Require signature upon delivery</label>
             </div>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" id="email_updates" name="email_updates" value="1" checked>
-                <label for="email_updates">Send me email updates about my shipment</label>
-            </div>
         </div>
         
         <!-- Price Estimate -->
         <div class="price-estimate">
-            <h4>Estimated Cost</h4>
+            <h4>💰 Estimated Cost</h4>
             <div class="price-amount" id="estimated-price">₦9.99</div>
-            <p class="form-note">Final price may vary based on exact weight and dimensions.</p>
+            <p class="form-note">
+                <i class="fas fa-info-circle"></i> Final price may vary based on exact weight and dimensions
+            </p>
         </div>
         
         <!-- Hidden field for amount -->
@@ -486,22 +732,25 @@
         
         <!-- Form Actions -->
         <div class="form-actions">
-            <a href="{{ url_for('index') }}" class="btn-secondary">Cancel</a>
+            <a href="{{ url_for('index') }}" class="btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
             <button type="submit" class="btn-primary" id="submit-btn">
-                <i class="fas fa-paper-plane"></i> Book Delivery
+                <i class="fas fa-paper-plane"></i> Book Delivery Now
             </button>
         </div>
     </form>
 </div>
 
 <script>
-    // Simple price calculator
+    // Base prices
     const basePrices = {
         'express': 19.99,
         'standard': 9.99,
         'economy': 4.99
     };
     
+    // Update price estimate
     function updatePriceEstimate() {
         const serviceType = document.getElementById('service_type').value;
         const weight = parseFloat(document.getElementById('weight').value) || 0;
@@ -510,55 +759,34 @@
         
         let total = basePrices[serviceType] || 9.99;
         
-        // Add weight-based charges
+        // Weight charges
         if (weight > 5) total += (weight - 5) * 1.5;
         if (weight > 20) total += (weight - 20) * 2;
         
-        // Add insurance if selected
+        // Insurance (2% of declared value)
         if (insuranceChecked && packageValue > 0) {
             total += packageValue * 0.02;
         }
         
-        // Update display
-        document.getElementById('estimated-price').textContent = '₦' + total.toFixed(2);
+        // Update display with animation
+        const priceElement = document.getElementById('estimated-price');
+        priceElement.textContent = '₦' + total.toFixed(2);
         
         // Update hidden amount field
         document.getElementById('amount').value = total.toFixed(2);
     }
     
     // Validation functions
-    
-    // Nigerian phone validation: 07065894127 or +2347065894127
     function validatePhone(phone) {
-        // Remove all non-digit characters except plus sign
-        let cleaned = phone.replace(/[^\d+]/g, '');
+        const cleaned = phone.replace(/\D/g, '');
         
         // Accept: 07065894127 (11 digits starting with 0)
-        // Accept: +2347065894127 (14 characters starting with +234)
-        // Accept: 2347065894127 (13 digits starting with 234 - without +)
-        
-        if (cleaned.startsWith('+234') && cleaned.length === 14) {
-            return true; // +2347065894127
-        } else if (cleaned.startsWith('0') && cleaned.length === 11) {
-            return true; // 07065894127
-        } else if (cleaned.startsWith('234') && cleaned.length === 13) {
-            return true; // 2347065894127 (without +)
+        // Accept: 2347065894127 (13 digits starting with 234)
+        if ((cleaned.startsWith('0') && cleaned.length === 11) ||
+            (cleaned.startsWith('234') && cleaned.length === 13)) {
+            return true;
         }
-        
         return false;
-    }
-    
-    // Format Nigerian phone number for display
-    function formatNigerianPhone(phone) {
-        let digits = phone.replace(/\D/g, '');
-        
-        if (digits.startsWith('234') && digits.length === 13) {
-            return '+234 ' + digits.substring(3, 6) + ' ' + digits.substring(6, 9) + ' ' + digits.substring(9);
-        } else if (digits.startsWith('0') && digits.length === 11) {
-            return digits.substring(0, 4) + ' ' + digits.substring(4, 7) + ' ' + digits.substring(7);
-        }
-        
-        return phone;
     }
     
     function validateAddress(address) {
@@ -597,7 +825,7 @@
         return true;
     }
     
-    // Real-time validation
+    // Setup real-time validation
     function setupValidation() {
         const fields = [
             'pickup_address', 'pickup_contact', 'pickup_phone',
@@ -608,64 +836,40 @@
         fields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field) {
-                field.addEventListener('blur', function() {
-                    validateField(fieldId);
-                });
-                field.addEventListener('input', function() {
-                    clearError(fieldId);
-                });
+                field.addEventListener('blur', () => validateField(fieldId));
+                field.addEventListener('input', () => clearError(fieldId));
             }
         });
         
-        // Nigerian phone formatting for pickup phone
-        document.getElementById('pickup_phone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            
-            if (value.startsWith('234') && value.length <= 13) {
-                if (value.length >= 4) {
-                    e.target.value = '+234 ' + value.substring(3, 6) + 
-                                    (value.length > 6 ? ' ' + value.substring(6, 9) : '') +
-                                    (value.length > 9 ? ' ' + value.substring(9, 13) : '');
+        // Phone formatting
+        ['pickup_phone', 'delivery_phone'].forEach(phoneId => {
+            document.getElementById(phoneId).addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.startsWith('234') && value.length <= 13) {
+                    e.target.value = formatPhone(value, '234');
+                } else if (value.startsWith('0') && value.length <= 11) {
+                    e.target.value = formatPhone(value, '0');
+                } else if (value.length > 0 && value.length <= 10) {
+                    e.target.value = '0' + value.substring(0, 3) + ' ' + 
+                                   value.substring(3, 6) + (value.length > 6 ? ' ' + value.substring(6, 10) : '');
                 }
-            } else if (value.startsWith('0') && value.length <= 11) {
-                if (value.length >= 4) {
-                    e.target.value = value.substring(0, 4) + 
-                                    (value.length > 4 ? ' ' + value.substring(4, 7) : '') +
-                                    (value.length > 7 ? ' ' + value.substring(7, 11) : '');
-                }
-            } else if (value.length > 0 && value.length <= 10) {
-                // Assume it's a 10-digit number without leading 0
-                e.target.value = '0' + value.substring(0, 3) + 
-                                (value.length > 3 ? ' ' + value.substring(3, 6) : '') +
-                                (value.length > 6 ? ' ' + value.substring(6, 10) : '');
-            }
-        });
-        
-        // Nigerian phone formatting for delivery phone
-        document.getElementById('delivery_phone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            
-            if (value.startsWith('234') && value.length <= 13) {
-                if (value.length >= 4) {
-                    e.target.value = '+234 ' + value.substring(3, 6) + 
-                                    (value.length > 6 ? ' ' + value.substring(6, 9) : '') +
-                                    (value.length > 9 ? ' ' + value.substring(9, 13) : '');
-                }
-            } else if (value.startsWith('0') && value.length <= 11) {
-                if (value.length >= 4) {
-                    e.target.value = value.substring(0, 4) + 
-                                    (value.length > 4 ? ' ' + value.substring(4, 7) : '') +
-                                    (value.length > 7 ? ' ' + value.substring(7, 11) : '');
-                }
-            } else if (value.length > 0 && value.length <= 10) {
-                // Assume it's a 10-digit number without leading 0
-                e.target.value = '0' + value.substring(0, 3) + 
-                                (value.length > 3 ? ' ' + value.substring(3, 6) : '') +
-                                (value.length > 6 ? ' ' + value.substring(6, 10) : '');
-            }
+            });
         });
     }
     
+    // Format phone number
+    function formatPhone(value, prefix) {
+        if (prefix === '234') {
+            return '+234 ' + value.substring(3, 6) + ' ' + 
+                   value.substring(6, 9) + (value.length > 9 ? ' ' + value.substring(9, 13) : '');
+        } else {
+            return value.substring(0, 4) + ' ' + 
+                   value.substring(4, 7) + (value.length > 7 ? ' ' + value.substring(7, 11) : '');
+        }
+    }
+    
+    // Validate individual field
     function validateField(fieldId) {
         const field = document.getElementById(fieldId);
         const value = field.value.trim();
@@ -674,45 +878,45 @@
             case 'pickup_address':
             case 'delivery_address':
                 if (!validateAddress(value)) {
-                    return showError(fieldId, 'Please enter a valid address (at least 10 characters)');
+                    return showError(fieldId, 'Address must be at least 10 characters');
                 }
                 break;
                 
             case 'pickup_contact':
             case 'delivery_contact':
                 if (!validateName(value)) {
-                    return showError(fieldId, 'Please enter a valid name (at least 2 characters)');
+                    return showError(fieldId, 'Enter a valid name (2+ characters)');
                 }
                 break;
                 
             case 'pickup_phone':
             case 'delivery_phone':
                 if (!validatePhone(value)) {
-                    return showError(fieldId, 'Please enter a valid Nigerian phone number (07065894127 or +2347065894127)');
+                    return showError(fieldId, 'Enter valid Nigerian number (08012345678 or 2348012345678)');
                 }
                 break;
                 
             case 'package_type':
                 if (!value) {
-                    return showError(fieldId, 'Please select a package type');
+                    return showError(fieldId, 'Select package type');
                 }
                 break;
                 
             case 'weight':
                 if (!validateWeight(value)) {
-                    return showError(fieldId, 'Please enter a valid weight between 0.1 and 1000 kg');
+                    return showError(fieldId, 'Weight must be 0.1-1000 kg');
                 }
                 break;
                 
             case 'service_type':
                 if (!value) {
-                    return showError(fieldId, 'Please select a delivery speed');
+                    return showError(fieldId, 'Select delivery speed');
                 }
                 break;
                 
             case 'pickup_date':
                 if (!value || !validateDate(value)) {
-                    return showError(fieldId, 'Please select a valid future date');
+                    return showError(fieldId, 'Select a valid future date');
                 }
                 break;
         }
@@ -720,7 +924,7 @@
         return clearError(fieldId);
     }
     
-    // Form validation on submit
+    // Form submission
     document.getElementById('booking-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -738,14 +942,13 @@
         });
         
         if (isValid) {
-            // Disable submit button to prevent double submission
-            document.getElementById('submit-btn').disabled = true;
-            document.getElementById('submit-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('submitting');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
             
-            // Submit the form
             this.submit();
         } else {
-            // Scroll to first error
             const firstError = document.querySelector('.error');
             if (firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -753,77 +956,70 @@
         }
     });
     
-    // AJAX for saved addresses
-    document.getElementById('saved-address-select').addEventListener('change', function() {
-        const addressId = this.value;
-        if (addressId) {
-            // Show loading
-            document.getElementById('address-preview').style.display = 'block';
-            document.getElementById('preview-contact').textContent = 'Loading...';
-            
-            // Fetch address details via AJAX
-            fetch(`/api/address/${addressId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('preview-contact').textContent = data.address.contact_name;
-                        document.getElementById('preview-address').textContent = data.address.address_line1;
-                        document.getElementById('preview-city').textContent = `${data.address.city}, ${data.address.state} ${data.address.postal_code}`;
-                        document.getElementById('preview-phone').textContent = formatNigerianPhone(data.address.contact_phone);
-                    } else {
+    // Saved address handling
+    const addressSelect = document.getElementById('saved-address-select');
+    if (addressSelect) {
+        addressSelect.addEventListener('change', function() {
+            const addressId = this.value;
+            if (addressId) {
+                const preview = document.getElementById('address-preview');
+                preview.style.display = 'block';
+                
+                fetch(`/api/address/${addressId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('preview-contact').textContent = data.address.contact_name;
+                            document.getElementById('preview-address').textContent = data.address.address_line1;
+                            document.getElementById('preview-city').textContent = `${data.address.city || ''} ${data.address.state || ''}`.trim();
+                            document.getElementById('preview-phone').textContent = data.address.contact_phone;
+                        }
+                    })
+                    .catch(() => {
                         document.getElementById('preview-contact').textContent = 'Error loading address';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('preview-contact').textContent = 'Error loading address';
-                });
-        } else {
-            document.getElementById('address-preview').style.display = 'none';
-        }
-    });
+                    });
+            }
+        });
+    }
     
     function useSelectedAddress() {
         const addressId = document.getElementById('saved-address-select').value;
         if (addressId) {
-            // Fetch address and populate pickup fields
             fetch(`/api/address/${addressId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         const addr = data.address;
                         document.getElementById('pickup_contact').value = addr.contact_name;
-                        document.getElementById('pickup_phone').value = formatNigerianPhone(addr.contact_phone);
+                        document.getElementById('pickup_phone').value = addr.contact_phone;
                         document.getElementById('pickup_address').value = 
-                            `${addr.address_line1}, ${addr.city}, ${addr.state} ${addr.postal_code}`;
+                            `${addr.address_line1}, ${addr.city}, ${addr.state}`;
                         
-                        // Clear errors
                         clearError('pickup_contact');
                         clearError('pickup_phone');
                         clearError('pickup_address');
                         
-                        // Hide preview
                         document.getElementById('address-preview').style.display = 'none';
                     }
                 });
         }
     }
     
-    // Set minimum date to today
+    // Set minimum date
     const today = new Date().toISOString().split('T')[0];
     const pickupDateInput = document.getElementById('pickup_date');
-    if (pickupDateInput && !pickupDateInput.value) {
+    if (pickupDateInput) {
         pickupDateInput.value = today;
+        pickupDateInput.min = today;
     }
-    pickupDateInput.min = today;
     
     // Add event listeners for price calculation
-    document.getElementById('service_type').addEventListener('change', updatePriceEstimate);
-    document.getElementById('weight').addEventListener('input', updatePriceEstimate);
-    document.getElementById('package_value').addEventListener('input', updatePriceEstimate);
+    ['service_type', 'weight', 'package_value'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updatePriceEstimate);
+    });
     document.getElementById('insurance_required').addEventListener('change', updatePriceEstimate);
     
-    // Initialize validation and price
+    // Initialize
     setupValidation();
     updatePriceEstimate();
 </script>
