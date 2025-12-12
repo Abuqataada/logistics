@@ -4,75 +4,114 @@
 
 {% block extra_css %}
 <style>
-    /* WhatsApp Dispatch Form Styles */
+    /* WhatsApp Dispatch Form Styles - Enhanced for Mobile & Color Visibility */
     .page-header {
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
         padding-top: 1rem;
+        animation: fadeInDown 0.6s ease;
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     .page-header h1 {
-        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 50%, #0D7048 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 0.5rem;
-        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        font-size: clamp(1.8rem, 5vw, 2.8rem);
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 1rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
     .page-header p {
         color: var(--text-medium);
-        font-size: 1.1rem;
-        max-width: 600px;
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        max-width: 700px;
         margin: 0 auto;
+        line-height: 1.6;
+        padding: 0 1rem;
     }
     
     .whatsapp-form-container {
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 0 auto;
         display: grid;
         grid-template-columns: 1fr;
         gap: 2rem;
-        padding: 0 1rem;
+        padding: 0 clamp(0.5rem, 3vw, 2rem);
     }
     
     @media (min-width: 992px) {
         .whatsapp-form-container {
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: minmax(350px, 400px) 1fr;
         }
     }
     
+    /* Benefits Card - Enhanced Colors */
     .whatsapp-benefits-card {
-        background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(18, 140, 126, 0.1) 100%);
-        border: 1px solid rgba(37, 211, 102, 0.2);
-        padding: 2rem;
+        background: linear-gradient(135deg, 
+            rgba(37, 211, 102, 0.15) 0%, 
+            rgba(18, 140, 126, 0.2) 50%, 
+            rgba(13, 112, 72, 0.15) 100%);
+        border: 2px solid rgba(37, 211, 102, 0.3);
+        padding: clamp(1.5rem, 4vw, 2.5rem);
         border-radius: var(--border-radius-lg);
         height: fit-content;
-        position: sticky;
-        top: 100px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(37, 211, 102, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .whatsapp-benefits-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(37, 211, 102, 0.2);
+    }
+    
+    .whatsapp-benefits-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #25D366, #128C7E);
     }
     
     .whatsapp-benefits-card h3 {
         color: #128C7E;
         margin-bottom: 1.5rem;
-        font-size: 1.5rem;
+        font-size: clamp(1.3rem, 4vw, 1.7rem);
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        font-weight: 700;
     }
     
     .whatsapp-benefits-card h3 i {
         font-size: 1.8rem;
+        color: #25D366;
     }
     
     .benefits-list {
         list-style: none;
         padding: 0;
+        margin: 0;
     }
     
     .benefits-list li {
@@ -80,76 +119,110 @@
         display: flex;
         align-items: flex-start;
         gap: 1rem;
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
         border-radius: var(--border-radius-md);
-        transition: var(--transition-smooth);
+        transition: all 0.3s ease;
+        border-left: 4px solid #25D366;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
     
     .benefits-list li:hover {
-        background: rgba(255, 255, 255, 0.8);
-        transform: translateX(5px);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 100%);
+        transform: translateX(8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-left-color: #128C7E;
     }
     
     .benefit-icon {
-        background: #25D366;
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
         color: white;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        font-size: 1rem;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
     }
     
     .benefit-content h4 {
-        color: var(--text-dark);
+        color: #1a202c;
         margin-bottom: 0.25rem;
-        font-size: 1rem;
+        font-size: 1.05rem;
+        font-weight: 600;
     }
     
     .benefit-content p {
-        color: var(--text-light);
+        color: #4a5568;
         font-size: 0.9rem;
         line-height: 1.5;
     }
     
+    /* Form Card - Enhanced */
     .whatsapp-form-card {
         background: var(--glass-bg);
-        backdrop-filter: blur(20px);
-        padding: 2.5rem;
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        padding: clamp(1.5rem, 4vw, 3rem);
         border-radius: var(--border-radius-lg);
         border: 1px solid var(--glass-border);
-        box-shadow: var(--shadow-md);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+    
+    .whatsapp-form-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    .whatsapp-form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
     }
     
     .form-header {
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
         text-align: center;
     }
     
     .form-header h2 {
         color: var(--text-dark);
-        margin-bottom: 0.5rem;
-        font-size: 1.8rem;
+        margin-bottom: 0.75rem;
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
     
     .form-header p {
         color: var(--text-medium);
-        font-size: 1rem;
+        font-size: clamp(0.95rem, 3vw, 1.1rem);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
     }
     
     .form-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
         gap: 1.5rem;
         margin-bottom: 1.5rem;
     }
     
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.75rem;
+        position: relative;
     }
     
     .form-group.full-width {
@@ -164,12 +237,14 @@
         font-weight: 600;
         color: var(--text-dark);
         font-size: 0.95rem;
+        transition: color 0.3s ease;
     }
     
     .form-group label i {
         color: #25D366;
         width: 20px;
         text-align: center;
+        font-size: 1.1rem;
     }
     
     .form-group input,
@@ -177,13 +252,14 @@
     .form-group textarea {
         width: 100%;
         padding: 1rem 1.25rem;
-        border: 1px solid var(--glass-border);
+        border: 2px solid var(--glass-border);
         border-radius: var(--border-radius-md);
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95);
         color: var(--text-dark);
         font-family: 'Inter', sans-serif;
         font-size: 1rem;
-        transition: var(--transition-smooth);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
     
     .form-group input:focus,
@@ -191,156 +267,506 @@
     .form-group textarea:focus {
         outline: none;
         border-color: #25D366;
-        box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+        box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.15);
         background: white;
+        transform: translateY(-2px);
+    }
+    
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #a0aec0;
     }
     
     .form-group textarea {
-        min-height: 100px;
+        min-height: 120px;
         resize: vertical;
+        line-height: 1.5;
     }
     
     .required-badge {
         color: #ef4444;
         margin-left: 0.25rem;
+        font-weight: bold;
+    }
+    
+    /* Select Styling */
+    .form-group select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2325D366' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px;
+        padding-right: 3rem;
+        cursor: pointer;
     }
     
     .form-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem;
-        margin-top: 2.5rem;
-        padding-top: 2rem;
-        border-top: 1px solid rgba(102, 126, 234, 0.1);
+        gap: 1.25rem;
+        margin-top: 3rem;
+        padding-top: 2.5rem;
+        border-top: 2px solid rgba(102, 126, 234, 0.15);
     }
     
     .btn-whatsapp-lg {
-        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 50%, #0D7048 100%);
         color: white;
-        padding: 1rem 2rem;
-        border-radius: var(--border-radius-md);
+        padding: 1.25rem 2.5rem;
+        border-radius: var(--border-radius-lg);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.75rem;
-        font-weight: 600;
-        font-size: 1.1rem;
+        font-weight: 700;
+        font-size: clamp(1rem, 3vw, 1.2rem);
         border: none;
         cursor: pointer;
-        transition: var(--transition-smooth);
+        transition: all 0.3s ease;
         flex: 1;
-        justify-content: center;
-        box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        min-width: 200px;
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-whatsapp-lg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
     }
     
     .btn-whatsapp-lg:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
         color: white;
     }
     
+    .btn-whatsapp-lg:hover::before {
+        left: 100%;
+    }
+    
+    .btn-whatsapp-lg:active {
+        transform: translateY(-1px);
+    }
+    
     .btn-whatsapp-lg i {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
     
     .btn-outline-lg {
         background: transparent;
-        border: 2px solid var(--glass-border);
-        color: var(--text-medium);
-        padding: 1rem 2rem;
-        border-radius: var(--border-radius-md);
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        color: var(--text-dark);
+        padding: 1.25rem 2.5rem;
+        border-radius: var(--border-radius-lg);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.75rem;
         font-weight: 600;
-        font-size: 1.1rem;
-        transition: var(--transition-smooth;
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        transition: all 0.3s ease;
         flex: 1;
-        justify-content: center;
+        min-width: 200px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-outline-lg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
     
     .btn-outline-lg:hover {
         border-color: #667eea;
         color: #667eea;
-        transform: translateY(-3px);
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .btn-outline-lg:hover::before {
+        opacity: 1;
+    }
+    
+    .btn-outline-lg i {
+        font-size: 1.2rem;
     }
     
     .whatsapp-note {
-        background: rgba(37, 211, 102, 0.05);
-        border: 1px solid rgba(37, 211, 102, 0.2);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-        margin-top: 2rem;
+        background: linear-gradient(135deg, 
+            rgba(37, 211, 102, 0.08) 0%, 
+            rgba(18, 140, 126, 0.12) 100%);
+        border: 2px solid rgba(37, 211, 102, 0.2);
+        border-radius: var(--border-radius-lg);
+        padding: clamp(1.25rem, 3vw, 2rem);
+        margin-top: 2.5rem;
         text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .whatsapp-note::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #25D366, #128C7E);
     }
     
     .whatsapp-note h4 {
         color: #128C7E;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-size: clamp(1.1rem, 3vw, 1.3rem);
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .whatsapp-note h4 i {
+        color: #25D366;
+        font-size: 1.4rem;
     }
     
     .whatsapp-note p {
         color: var(--text-medium);
-        font-size: 0.95rem;
-        line-height: 1.6;
+        font-size: clamp(0.9rem, 2.5vw, 1rem);
+        line-height: 1.7;
+        margin: 0 auto;
+        max-width: 700px;
     }
     
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
+    /* Alternative Options Section - Enhanced */
+    .alternative-options {
+        max-width: 1200px;
+        margin: 4rem auto;
+        padding: 0 clamp(0.5rem, 3vw, 2rem);
+        animation: fadeInUp 0.6s ease 0.2s both;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .alternative-options h3 {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: var(--text-dark);
+        font-size: clamp(1.3rem, 4vw, 1.8rem);
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        padding-bottom: 1rem;
+        position: relative;
+    }
+    
+    .alternative-options h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, #25D366, #128C7E);
+        border-radius: 2px;
+    }
+    
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .option-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius-lg);
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: block;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .option-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-lg);
+        border-color: transparent;
+    }
+    
+    .option-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+    
+    .option-card:nth-child(1)::before {
+        background: linear-gradient(90deg, #25D366, #128C7E);
+    }
+    
+    .option-card:nth-child(2)::before {
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+    
+    .option-card:nth-child(3)::before {
+        background: linear-gradient(90deg, #f59e0b, #dc2626);
+    }
+    
+    .option-card:hover::before {
+        opacity: 1;
+        height: 6px;
+    }
+    
+    .option-icon {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+    
+    .option-card:nth-child(1) .option-icon {
+        color: #25D366;
+        background: rgba(37, 211, 102, 0.1);
+        padding: 1rem;
+        border-radius: 50%;
+    }
+    
+    .option-card:nth-child(2) .option-icon {
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+        padding: 1rem;
+        border-radius: 50%;
+    }
+    
+    .option-card:nth-child(3) .option-icon {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+        padding: 1rem;
+        border-radius: 50%;
+    }
+    
+    .option-card:hover .option-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    .option-card h4 {
+        color: var(--text-dark);
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+        font-weight: 600;
+    }
+    
+    .option-card p {
+        color: var(--text-medium);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    /* Mobile Responsive Enhancements */
+    @media (max-width: 991px) {
         .page-header h1 {
-            font-size: 2rem;
             flex-direction: column;
             gap: 0.5rem;
         }
         
-        .whatsapp-form-card {
-            padding: 1.5rem;
+        .whatsapp-benefits-card {
+            position: static;
+            margin-bottom: 1rem;
         }
         
-        .form-grid {
-            grid-template-columns: 1fr;
+        .form-header {
+            margin-bottom: 2rem;
         }
         
         .form-actions {
             flex-direction: column;
+            gap: 1rem;
         }
         
         .btn-whatsapp-lg,
         .btn-outline-lg {
             width: 100%;
+            min-width: auto;
+            padding: 1.25rem 1.5rem;
         }
-    }
-    
-    /* Dark mode support */
-    @media (prefers-color-scheme: dark) {
-        .whatsapp-benefits-card {
-            background: linear-gradient(135deg, rgba(37, 211, 102, 0.15) 0%, rgba(18, 140, 126, 0.15) 100%);
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
         }
         
         .benefits-list li {
-            background: rgba(255, 255, 255, 0.05);
+            padding: 0.875rem;
         }
         
-        .benefits-list li:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .benefit-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+        }
+        
+        .options-grid {
+            grid-template-columns: 1fr;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .option-card {
+            padding: 1.75rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .whatsapp-form-card,
+        .whatsapp-benefits-card {
+            padding: 1.25rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
         }
         
         .form-group input,
         .form-group select,
         .form-group textarea {
-            background: rgba(255, 255, 255, 0.05);
-            color: #e2e8f0;
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .benefit-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+        }
+        
+        .benefit-content h4 {
+            font-size: 1rem;
+        }
+        
+        .benefit-content p {
+            font-size: 0.85rem;
+        }
+        
+        .whatsapp-note {
+            padding: 1.25rem 1rem;
+        }
+        
+        .option-card {
+            padding: 1.5rem;
+        }
+        
+        .option-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.25rem;
+        }
+    }
+    
+    /* Touch Device Optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .benefits-list li:hover,
+        .btn-whatsapp-lg:hover,
+        .btn-outline-lg:hover,
+        .option-card:hover {
+            transform: none;
+        }
+        
+        .benefits-list li:active,
+        .btn-whatsapp-lg:active,
+        .btn-outline-lg:active,
+        .option-card:active {
+            transform: scale(0.98);
         }
         
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            background: rgba(255, 255, 255, 0.1);
+            transform: none;
+        }
+    }
+    
+    /* Print Styles */
+    @media print {
+        .whatsapp-benefits-card,
+        .alternative-options,
+        .whatsapp-note {
+            display: none;
+        }
+        
+        .whatsapp-form-card {
+            box-shadow: none;
+            border: 1px solid #ddd;
+            background: white;
+        }
+        
+        .btn-whatsapp-lg,
+        .btn-outline-lg {
+            display: none;
+        }
+    }
+    
+    /* Reduced Motion Support */
+    @media (prefers-reduced-motion: reduce) {
+        .page-header,
+        .alternative-options,
+        .benefits-list li,
+        .btn-whatsapp-lg,
+        .btn-outline-lg,
+        .option-card,
+        .form-group input,
+        .form-group select,
+        .form-group textarea,
+        .whatsapp-benefits-card,
+        .whatsapp-form-card {
+            animation: none;
+            transition: none;
         }
     }
 </style>
@@ -352,13 +778,13 @@
         <i class="fab fa-whatsapp"></i>
         Book Dispatch via WhatsApp
     </h1>
-    <p>Fill in the form below to generate a pre-filled WhatsApp message for quick booking</p>
+    <p>Fill in the form below to generate a pre-filled WhatsApp message for quick booking with our logistics team</p>
 </div>
 
 <div class="whatsapp-form-container">
     <!-- Benefits Sidebar -->
     <div class="whatsapp-benefits-card">
-        <h3><i class="fas fa-star"></i> Why WhatsApp?</h3>
+        <h3><i class="fas fa-star"></i> Why Book on WhatsApp?</h3>
         <ul class="benefits-list">
             <li>
                 <div class="benefit-icon">
@@ -366,7 +792,7 @@
                 </div>
                 <div class="benefit-content">
                     <h4>Instant Response</h4>
-                    <p>Get replies within minutes, 24/7</p>
+                    <p>Get replies within minutes, 24/7 support</p>
                 </div>
             </li>
             <li>
@@ -375,7 +801,7 @@
                 </div>
                 <div class="benefit-content">
                     <h4>Photo Sharing</h4>
-                    <p>Share package photos instantly</p>
+                    <p>Share package photos instantly for accurate quotes</p>
                 </div>
             </li>
             <li>
@@ -384,7 +810,7 @@
                 </div>
                 <div class="benefit-content">
                     <h4>Live Location</h4>
-                    <p>Share real-time pickup/drop locations</p>
+                    <p>Share real-time pickup/delivery locations</p>
                 </div>
             </li>
             <li>
@@ -393,7 +819,7 @@
                 </div>
                 <div class="benefit-content">
                     <h4>Direct Chat</h4>
-                    <p>Talk directly with our dispatch team</p>
+                    <p>Talk directly with our dispatch team, no waiting</p>
                 </div>
             </li>
             <li>
@@ -402,7 +828,7 @@
                 </div>
                 <div class="benefit-content">
                     <h4>Quick Quotes</h4>
-                    <p>Receive instant price estimates</p>
+                    <p>Receive instant price estimates within minutes</p>
                 </div>
             </li>
             <li>
@@ -411,7 +837,7 @@
                 </div>
                 <div class="benefit-content">
                     <h4>Secure & Private</h4>
-                    <p>End-to-end encrypted communication</p>
+                    <p>End-to-end encrypted, secure communication</p>
                 </div>
             </li>
         </ul>
@@ -421,7 +847,7 @@
     <div class="whatsapp-form-card">
         <div class="form-header">
             <h2>Dispatch Request Form</h2>
-            <p>Complete this form to generate a WhatsApp message with all your details</p>
+            <p>Complete this form to generate a WhatsApp message with all your booking details</p>
         </div>
 
         <form method="POST" action="{{ url_for('whatsapp_dispatch_form') }}">
@@ -433,7 +859,8 @@
                     </label>
                     <input type="text" id="name" name="name" 
                            value="{{ current_user.first_name + ' ' + current_user.last_name if current_user.is_authenticated else '' }}"
-                           placeholder="Enter your full name" required>
+                           placeholder="Enter your full name" required
+                           autocomplete="name">
                 </div>
                 
                 <div class="form-group">
@@ -443,7 +870,9 @@
                     </label>
                     <input type="tel" id="phone" name="phone" 
                            value="{{ current_user.phone if current_user.is_authenticated else '' }}"
-                           placeholder="e.g., 08012345678" required>
+                           placeholder="e.g., 2348012345678" required
+                           autocomplete="tel"
+                           inputmode="numeric">
                 </div>
             </div>
             
@@ -454,13 +883,14 @@
                         Service Type <span class="required-badge">*</span>
                     </label>
                     <select id="service_type" name="service_type" required>
-                        <option value="Express Delivery">Express Delivery (Same Day)</option>
-                        <option value="Standard Delivery" selected>Standard Delivery (1-2 Days)</option>
-                        <option value="Freight Service">Freight Service</option>
-                        <option value="Warehouse Pickup">Warehouse Pickup</option>
-                        <option value="International Shipping">International Shipping</option>
-                        <option value="Document Delivery">Document Delivery</option>
-                        <option value="Heavy Goods">Heavy Goods Transport</option>
+                        <option value="" disabled selected>Select service type</option>
+                        <option value="Express Delivery">🚀 Express Delivery (Same Day)</option>
+                        <option value="Standard Delivery">📦 Standard Delivery (1-2 Days)</option>
+                        <option value="Freight Service">🚚 Freight & Heavy Goods</option>
+                        <option value="Warehouse Pickup">🏢 Warehouse Pickup</option>
+                        <option value="International Shipping">🌍 International Shipping</option>
+                        <option value="Document Delivery">📄 Document Delivery</option>
+                        <option value="Temperature Controlled">❄️ Temperature Controlled</option>
                     </select>
                 </div>
                 
@@ -470,10 +900,10 @@
                         Urgency Level
                     </label>
                     <select id="urgency" name="urgency">
-                        <option value="Standard" selected>Standard (Within 48 hours)</option>
-                        <option value="Urgent">Urgent (Within 24 hours)</option>
-                        <option value="Emergency">Emergency (Same day)</option>
-                        <option value="Scheduled">Scheduled (Specific date)</option>
+                        <option value="Standard" selected>⏱️ Standard (Within 48 hours)</option>
+                        <option value="Urgent">🚨 Urgent (Within 24 hours)</option>
+                        <option value="Emergency">⚠️ Emergency (Same day)</option>
+                        <option value="Scheduled">📅 Scheduled (Pick a date)</option>
                     </select>
                 </div>
             </div>
@@ -484,7 +914,8 @@
                     Pickup Location <span class="required-badge">*</span>
                 </label>
                 <input type="text" id="pickup_location" name="pickup_location" 
-                       placeholder="Full address, landmark, or GPS coordinates" required>
+                       placeholder="Full address, landmark, or GPS coordinates" required
+                       autocomplete="street-address">
             </div>
             
             <div class="form-group full-width">
@@ -493,7 +924,8 @@
                     Delivery Location <span class="required-badge">*</span>
                 </label>
                 <input type="text" id="delivery_location" name="delivery_location" 
-                       placeholder="Full address, landmark, or GPS coordinates" required>
+                       placeholder="Full address, landmark, or GPS coordinates" required
+                       autocomplete="street-address">
             </div>
             
             <div class="form-group full-width">
@@ -502,17 +934,21 @@
                     Package Details
                 </label>
                 <textarea id="package_details" name="package_details" 
-                          placeholder="Describe your package(s): 
-- Dimensions (L x W x H)
-- Weight
-- Type (fragile, liquid, electronics, etc.)
-- Quantity
-- Special handling requirements"></textarea>
+                          placeholder="Describe your package(s):
+• Dimensions (L x W x H)
+• Approximate weight
+• Item type (fragile, electronics, etc.)
+• Quantity
+• Special handling requirements"
+                          rows="4"></textarea>
+                <small style="display: block; margin-top: 0.5rem; color: var(--text-light); font-size: 0.85rem;">
+                    Tip: Be specific for more accurate quotes
+                </small>
             </div>
             
             <div class="whatsapp-note">
                 <h4><i class="fas fa-info-circle"></i> Important Note</h4>
-                <p>After submitting this form, you'll be redirected to WhatsApp with a pre-filled message containing all your details. Our team will respond within minutes to provide a quote and confirm your booking.</p>
+                <p>After submitting this form, you'll be redirected to WhatsApp with a professionally formatted message containing all your details. Our team will respond within minutes to provide a quote and confirm your booking.</p>
             </div>
             
             <div class="form-actions">
@@ -530,29 +966,31 @@
 </div>
 
 <!-- Alternative Options Section -->
-<div class="alternative-options" style="max-width: 1000px; margin: 3rem auto; padding: 0 1rem;">
-    <h3 style="text-align: center; margin-bottom: 2rem; color: var(--text-dark);">Other Ways to Book</h3>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-        <a href="{{ url_for('whatsapp_dispatch') }}" style="display: block; text-decoration: none;">
-            <div style="background: rgba(37, 211, 102, 0.1); padding: 1.5rem; border-radius: var(--border-radius-md); text-align: center; transition: var(--transition-smooth);">
-                <i class="fab fa-whatsapp" style="font-size: 2rem; color: #25D366; margin-bottom: 1rem;"></i>
-                <h4 style="color: var(--text-dark); margin-bottom: 0.5rem;">Quick WhatsApp</h4>
-                <p style="color: var(--text-medium); font-size: 0.9rem;">Simple message without form</p>
+<div class="alternative-options">
+    <h3>Other Ways to Book</h3>
+    <div class="options-grid">
+        <a href="{{ url_for('whatsapp_dispatch') }}" class="option-card">
+            <div class="option-icon">
+                <i class="fab fa-whatsapp"></i>
             </div>
+            <h4>Quick WhatsApp</h4>
+            <p>Simple message without filling forms. Perfect for urgent requests.</p>
         </a>
-        <a href="{{ url_for('book_delivery') }}" style="display: block; text-decoration: none;">
-            <div style="background: rgba(102, 126, 234, 0.1); padding: 1.5rem; border-radius: var(--border-radius-md); text-align: center; transition: var(--transition-smooth);">
-                <i class="fas fa-laptop" style="font-size: 2rem; color: #667eea; margin-bottom: 1rem;"></i>
-                <h4 style="color: var(--text-dark); margin-bottom: 0.5rem;">Website Booking</h4>
-                <p style="color: var(--text-medium); font-size: 0.9rem;">Full booking system</p>
+        
+        <a href="{{ url_for('book_delivery') }}" class="option-card">
+            <div class="option-icon">
+                <i class="fas fa-laptop"></i>
             </div>
+            <h4>Website Booking</h4>
+            <p>Full booking system with tracking and payment integration.</p>
         </a>
-        <a href="{{ url_for('whatsapp_quote') }}" style="display: block; text-decoration: none;">
-            <div style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: var(--border-radius-md); text-align: center; transition: var(--transition-smooth);">
-                <i class="fas fa-calculator" style="font-size: 2rem; color: #f59e0b; margin-bottom: 1rem;"></i>
-                <h4 style="color: var(--text-dark); margin-bottom: 0.5rem;">Quick Quote</h4>
-                <p style="color: var(--text-medium); font-size: 0.9rem;">Get price estimate first</p>
+        
+        <a href="{{ url_for('whatsapp_quote') }}" class="option-card">
+            <div class="option-icon">
+                <i class="fas fa-calculator"></i>
             </div>
+            <h4>Quick Quote</h4>
+            <p>Get price estimates first before committing to a booking.</p>
         </a>
     </div>
 </div>
@@ -561,18 +999,36 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Auto-format phone number
+        // Mobile detection
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // Auto-format phone number with better UX
         const phoneInput = document.getElementById('phone');
         if (phoneInput) {
             phoneInput.addEventListener('input', function(e) {
                 let value = e.target.value.replace(/\D/g, '');
+                
+                // Auto-add country code if Nigerian number
                 if (value.startsWith('0')) {
                     value = '234' + value.substring(1);
                 }
-                if (!value.startsWith('234') && value.length > 0) {
+                
+                // Ensure it starts with 234 for international format
+                if (!value.startsWith('234') && value.length > 0 && value.length <= 10) {
                     value = '234' + value;
                 }
+                
+                // Format with spaces for readability on desktop
+                if (!isMobile && value.length > 3) {
+                    value = value.replace(/(\d{3})(\d{3})(\d{4})(\d+)?/, '$1 $2 $3 $4').trim();
+                }
+                
                 e.target.value = value;
+            });
+            
+            // Clear formatting on focus for easier editing
+            phoneInput.addEventListener('focus', function() {
+                this.value = this.value.replace(/\s/g, '');
             });
         }
         
@@ -588,8 +1044,15 @@
             // Add user addresses to datalist
             {% for address in current_user.addresses %}
                 const option = document.createElement('option');
-                option.value = "{{ address.address_line1 }}{% if address.city %}, {{ address.city }}{% endif %}{% if address.state %}, {{ address.state }}{% endif %}";
-                option.text = "{{ address.contact_name }} ({{ address.address_type }})";
+                let addressText = "{{ address.address_line1 }}";
+                {% if address.city %}
+                    addressText += ", {{ address.city }}";
+                {% endif %}
+                {% if address.state %}
+                    addressText += ", {{ address.state }}";
+                {% endif %}
+                option.value = addressText;
+                option.textContent = "{{ address.contact_name }} ({{ address.address_type|title }})";
                 addressList.appendChild(option);
             {% endfor %}
             
@@ -604,7 +1067,7 @@
             }
         {% endif %}
         
-        // Form validation
+        // Enhanced form validation
         const form = document.querySelector('form');
         if (form) {
             form.addEventListener('submit', function(e) {
@@ -612,49 +1075,221 @@
                 const phone = document.getElementById('phone').value.trim();
                 const pickup = document.getElementById('pickup_location').value.trim();
                 const delivery = document.getElementById('delivery_location').value.trim();
+                const serviceType = document.getElementById('service_type').value;
                 
-                if (!name || !phone || !pickup || !delivery) {
-                    e.preventDefault();
-                    alert('Please fill in all required fields marked with *');
-                    return false;
+                let isValid = true;
+                let errorMessage = '';
+                
+                // Clear previous error states
+                document.querySelectorAll('.form-group').forEach(group => {
+                    group.classList.remove('error');
+                });
+                
+                // Validate name
+                if (!name) {
+                    isValid = false;
+                    document.getElementById('name').parentElement.classList.add('error');
+                    errorMessage += '• Full name is required\n';
                 }
                 
-                // Validate phone number format
-                const phoneRegex = /^234\d{10}$/;
-                if (!phoneRegex.test(phone)) {
+                // Validate phone
+                if (!phone) {
+                    isValid = false;
+                    document.getElementById('phone').parentElement.classList.add('error');
+                    errorMessage += '• WhatsApp number is required\n';
+                } else {
+                    const cleanPhone = phone.replace(/\s/g, '');
+                    const phoneRegex = /^234\d{10}$/;
+                    if (!phoneRegex.test(cleanPhone)) {
+                        isValid = false;
+                        document.getElementById('phone').parentElement.classList.add('error');
+                        errorMessage += '• Please enter a valid Nigerian phone number (e.g., 2348012345678)\n';
+                    }
+                }
+                
+                // Validate locations
+                if (!pickup) {
+                    isValid = false;
+                    document.getElementById('pickup_location').parentElement.classList.add('error');
+                    errorMessage += '• Pickup location is required\n';
+                }
+                
+                if (!delivery) {
+                    isValid = false;
+                    document.getElementById('delivery_location').parentElement.classList.add('error');
+                    errorMessage += '• Delivery location is required\n';
+                }
+                
+                // Validate service type
+                if (!serviceType) {
+                    isValid = false;
+                    document.getElementById('service_type').parentElement.classList.add('error');
+                    errorMessage += '• Please select a service type\n';
+                }
+                
+                if (!isValid) {
                     e.preventDefault();
-                    alert('Please enter a valid Nigerian phone number (e.g., 2348012345678)');
+                    
+                    // Show error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'form-error-message';
+                    errorDiv.style.cssText = `
+                        background: rgba(239, 68, 68, 0.1);
+                        border: 2px solid rgba(239, 68, 68, 0.3);
+                        border-radius: var(--border-radius-md);
+                        padding: 1rem;
+                        margin-bottom: 1.5rem;
+                        color: #b91c1c;
+                        font-weight: 500;
+                        white-space: pre-line;
+                        animation: slideDown 0.3s ease;
+                    `;
+                    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Please fix the following errors:\n${errorMessage}`;
+                    
+                    // Remove existing error message if any
+                    const existingError = form.querySelector('.form-error-message');
+                    if (existingError) {
+                        existingError.remove();
+                    }
+                    
+                    // Insert error message at top of form
+                    form.insertBefore(errorDiv, form.firstChild);
+                    
+                    // Scroll to error message
+                    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
                     return false;
                 }
                 
                 // Show loading state
                 const submitBtn = form.querySelector('.btn-whatsapp-lg');
                 if (submitBtn) {
+                    const originalText = submitBtn.innerHTML;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating WhatsApp Link...';
                     submitBtn.disabled = true;
+                    
+                    // Revert after 5 seconds (in case redirect fails)
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }, 5000);
+                }
+            });
+            
+            // Real-time validation
+            const validateField = (field, validator) => {
+                field.addEventListener('blur', function() {
+                    const value = this.value.trim();
+                    const parent = this.parentElement;
+                    
+                    if (!value && this.hasAttribute('required')) {
+                        parent.classList.add('error');
+                    } else if (validator && !validator(value)) {
+                        parent.classList.add('error');
+                    } else {
+                        parent.classList.remove('error');
+                    }
+                });
+            };
+            
+            validateField(document.getElementById('name'));
+            validateField(document.getElementById('phone'), (value) => {
+                const cleanValue = value.replace(/\s/g, '');
+                return /^234\d{10}$/.test(cleanValue);
+            });
+            validateField(document.getElementById('pickup_location'));
+            validateField(document.getElementById('delivery_location'));
+        }
+        
+        // Auto-fill based on previous session with expiration
+        const now = Date.now();
+        const storedName = localStorage.getItem('last_dispatch_name');
+        const storedNameTime = localStorage.getItem('last_dispatch_name_time');
+        const storedPhone = localStorage.getItem('last_dispatch_phone');
+        const storedPhoneTime = localStorage.getItem('last_dispatch_phone_time');
+        
+        // 7-day expiration for stored data
+        const sevenDays = 7 * 24 * 60 * 60 * 1000;
+        
+        if (storedName && storedNameTime && (now - storedNameTime) < sevenDays) {
+            document.getElementById('name').value = storedName;
+        }
+        
+        if (storedPhone && storedPhoneTime && (now - storedPhoneTime) < sevenDays) {
+            document.getElementById('phone').value = storedPhone;
+        }
+        
+        // Save form data on change with timestamp
+        document.getElementById('name')?.addEventListener('change', function() {
+            localStorage.setItem('last_dispatch_name', this.value);
+            localStorage.setItem('last_dispatch_name_time', Date.now());
+        });
+        
+        document.getElementById('phone')?.addEventListener('change', function() {
+            localStorage.setItem('last_dispatch_phone', this.value.replace(/\s/g, ''));
+            localStorage.setItem('last_dispatch_phone_time', Date.now());
+        });
+        
+        // Mobile-specific optimizations
+        if (isMobile) {
+            // Add inputmode hints for mobile keyboards
+            const phoneField = document.getElementById('phone');
+            if (phoneField) {
+                phoneField.setAttribute('inputmode', 'numeric');
+            }
+            
+            // Focus management for better mobile UX
+            document.querySelectorAll('input, select, textarea').forEach(field => {
+                field.addEventListener('focus', function() {
+                    // Ensure the field is visible when keyboard appears
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                });
+            });
+        }
+        
+        // Service type change handler
+        const serviceTypeSelect = document.getElementById('service_type');
+        const urgencySelect = document.getElementById('urgency');
+        
+        if (serviceTypeSelect && urgencySelect) {
+            serviceTypeSelect.addEventListener('change', function() {
+                // Auto-select urgency based on service type
+                if (this.value === 'Express Delivery') {
+                    urgencySelect.value = 'Emergency';
+                } else if (this.value === 'Standard Delivery') {
+                    urgencySelect.value = 'Standard';
+                } else if (this.value === 'Freight Service') {
+                    urgencySelect.value = 'Scheduled';
                 }
             });
         }
         
-        // Auto-fill based on previous session
-        const savedName = sessionStorage.getItem('last_dispatch_name');
-        const savedPhone = sessionStorage.getItem('last_dispatch_phone');
-        
-        if (savedName && !document.getElementById('name').value) {
-            document.getElementById('name').value = savedName;
+        // Package details auto-suggest
+        const packageTextarea = document.getElementById('package_details');
+        if (packageTextarea) {
+            packageTextarea.addEventListener('focus', function() {
+                if (!this.value.trim()) {
+                    this.placeholder = `Examples:
+• 30×20×15 cm, 2kg, Electronics (Fragile)
+• Large box, 15kg, Clothing
+• Document envelope, 500g, Urgent documents
+• 5 boxes, 50kg total, Household items`;
+                }
+            });
+            
+            packageTextarea.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    this.placeholder = `Describe your package(s):
+• Dimensions (L x W x H)
+• Approximate weight
+• Item type (fragile, electronics, etc.)
+• Quantity
+• Special handling requirements`;
+                }
+            });
         }
-        if (savedPhone && !document.getElementById('phone').value) {
-            document.getElementById('phone').value = savedPhone;
-        }
-        
-        // Save form data on change
-        document.getElementById('name')?.addEventListener('change', function() {
-            sessionStorage.setItem('last_dispatch_name', this.value);
-        });
-        
-        document.getElementById('phone')?.addEventListener('change', function() {
-            sessionStorage.setItem('last_dispatch_phone', this.value);
-        });
     });
 </script>
 {% endblock %}
