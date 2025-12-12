@@ -1720,7 +1720,7 @@
     </div>
 
     <script>
-        // Mobile Navigation
+        // Mobile Navigation - CORRECTED VERSION
         document.addEventListener('DOMContentLoaded', function() {
             const menuToggle = document.getElementById('menuToggle');
             const navMenu = document.getElementById('navMenu');
@@ -1728,31 +1728,69 @@
             const body = document.body;
             const header = document.querySelector('header');
 
+            // Debug: Check if elements exist
+            console.log('Menu Toggle found:', !!menuToggle);
+            console.log('Nav Menu found:', !!navMenu);
+            console.log('Menu Overlay found:', !!menuOverlay);
+
             // Toggle mobile menu
-            menuToggle.addEventListener('click', function() {
+            menuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Menu toggle clicked');
+                
                 const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                const willBeExpanded = !isExpanded;
                 
                 this.classList.toggle('active');
                 navMenu.classList.toggle('active');
                 menuOverlay.classList.toggle('active');
                 
-                this.setAttribute('aria-expanded', !isExpanded);
-                body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+                this.setAttribute('aria-expanded', willBeExpanded);
+                
+                if (willBeExpanded) {
+                    body.style.overflow = 'hidden';
+                    body.classList.add('menu-open');
+                } else {
+                    body.style.overflow = '';
+                    body.classList.remove('menu-open');
+                }
             });
 
             // Close menu when clicking overlay
-            menuOverlay.addEventListener('click', closeMenu);
+            menuOverlay.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Overlay clicked - closing menu');
+                closeMenu();
+            });
 
             // Close menu when clicking ESC key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                    console.log('ESC pressed - closing menu');
                     closeMenu();
                 }
             });
 
             // Close menu when clicking a link
             document.querySelectorAll('.nav-menu a').forEach(link => {
-                link.addEventListener('click', closeMenu);
+                link.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    console.log('Menu link clicked - closing menu');
+                    closeMenu();
+                });
+            });
+
+            // Close menu when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && 
+                    navMenu.classList.contains('active') &&
+                    !navMenu.contains(e.target) && 
+                    !menuToggle.contains(e.target) &&
+                    !menuOverlay.contains(e.target)) {
+                    console.log('Clicked outside - closing menu');
+                    closeMenu();
+                }
             });
 
             // Close menu function
@@ -1762,6 +1800,7 @@
                 menuOverlay.classList.remove('active');
                 menuToggle.setAttribute('aria-expanded', 'false');
                 body.style.overflow = '';
+                body.classList.remove('menu-open');
             }
 
             // Header scroll effect
@@ -1795,24 +1834,6 @@
                 });
             }
 
-            // Prevent pull-to-refresh on mobile
-            menuToggle.addEventListener('click', function() {
-                const isExpanded = this.getAttribute('aria-expanded') === 'true';
-                
-                this.classList.toggle('active');
-                navMenu.classList.toggle('active');
-                menuOverlay.classList.toggle('active');
-                
-                // Add/remove menu-open class to body
-                if (navMenu.classList.contains('active')) {
-                    body.classList.add('menu-open');
-                } else {
-                    body.classList.remove('menu-open');
-                }
-                
-                this.setAttribute('aria-expanded', !isExpanded);
-            });
-
             // Auto-hide flash messages
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert');
@@ -1820,7 +1841,11 @@
                     alert.style.transition = 'opacity 0.5s, transform 0.5s';
                     alert.style.opacity = '0';
                     alert.style.transform = 'translateY(-20px)';
-                    setTimeout(() => alert.remove(), 500);
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
+                    }, 500);
                 });
             }, 5000);
 
@@ -1831,6 +1856,7 @@
                 resizeTimer = setTimeout(function() {
                     // Close menu on resize to desktop
                     if (window.innerWidth >= 1024 && navMenu.classList.contains('active')) {
+                        console.log('Resized to desktop - closing menu');
                         closeMenu();
                     }
                 }, 250);
@@ -1870,681 +1896,692 @@
             let isTyping = false;
             let unreadMessages = 0;
             
-            // Toggle chat window
-            chatToggle.addEventListener('click', function() {
-                isChatOpen = !isChatOpen;
-                chatToggle.classList.toggle('active', isChatOpen);
-                chatContainer.classList.toggle('active', isChatOpen);
+            // Check if chat elements exist
+            if (chatToggle && chatContainer) {
+                console.log('Chat elements found, initializing chat...');
                 
-                if (isChatOpen) {
-                    chatToggle.setAttribute('aria-expanded', 'true');
-                    chatInput.focus();
+                // Toggle chat window
+                chatToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    isChatOpen = !isChatOpen;
+                    chatToggle.classList.toggle('active', isChatOpen);
+                    chatContainer.classList.toggle('active', isChatOpen);
                     
-                    // Clear unread messages badge when opening
-                    if (unreadMessages > 0) {
-                        unreadMessages = 0;
+                    if (isChatOpen) {
+                        chatToggle.setAttribute('aria-expanded', 'true');
+                        if (chatInput) chatInput.focus();
+                        
+                        // Clear unread messages badge when opening
+                        if (unreadMessages > 0) {
+                            unreadMessages = 0;
+                            updateBadge();
+                        }
+                    } else {
+                        chatToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                
+                // Close chat window
+                if (chatClose) {
+                    chatClose.addEventListener('click', function() {
+                        isChatOpen = false;
+                        chatToggle.classList.remove('active');
+                        chatContainer.classList.remove('active');
+                        chatToggle.setAttribute('aria-expanded', 'false');
+                    });
+                }
+                
+                // Auto-resize textarea
+                if (chatInput) {
+                    chatInput.addEventListener('input', function() {
+                        this.style.height = 'auto';
+                        this.style.height = (this.scrollHeight) + 'px';
+                        if (chatSend) chatSend.disabled = this.value.trim().length === 0;
+                    });
+                    
+                    // Send message on Enter (Shift+Enter for new line)
+                    chatInput.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    });
+                }
+                
+                // Send message on button click
+                if (chatSend) {
+                    chatSend.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        sendMessage();
+                    });
+                }
+                
+                // Quick reply buttons
+                if (quickReplies) {
+                    document.querySelectorAll('.quick-reply').forEach(button => {
+                        button.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const reply = this.getAttribute('data-reply');
+                            addMessage(reply, 'user');
+                            handleQuickReply(reply);
+                        });
+                    });
+                }
+                
+                // Function to send message
+                function sendMessage() {
+                    if (!chatInput) return;
+                    const message = chatInput.value.trim();
+                    if (!message) return;
+                    
+                    addMessage(message, 'user');
+                    chatInput.value = '';
+                    chatInput.style.height = 'auto';
+                    if (chatSend) chatSend.disabled = true;
+                    
+                    // Show typing indicator
+                    showTypingIndicator();
+                    
+                    // Simulate agent response after delay
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        generateEnhancedResponse(message);
+                    }, 1500 + Math.random() * 1000);
+                }
+                
+                // Function to add message to chat
+                function addMessage(text, sender) {
+                    if (!chatMessages) return;
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${sender}`;
+                    
+                    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    messageDiv.innerHTML = `${text}<span class="message-time">${time}</span>`;
+                    
+                    chatMessages.appendChild(messageDiv);
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // If chat is closed and message is from agent, show badge
+                    if (sender === 'agent' && !isChatOpen) {
+                        unreadMessages++;
                         updateBadge();
                     }
-                } else {
-                    chatToggle.setAttribute('aria-expanded', 'false');
-                }
-            });
-            
-            // Close chat window
-            chatClose.addEventListener('click', function() {
-                isChatOpen = false;
-                chatToggle.classList.remove('active');
-                chatContainer.classList.remove('active');
-                chatToggle.setAttribute('aria-expanded', 'false');
-            });
-            
-            // Auto-resize textarea
-            chatInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-                chatSend.disabled = this.value.trim().length === 0;
-            });
-            
-            // Send message on Enter (Shift+Enter for new line)
-            chatInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-            
-            // Send message on button click
-            chatSend.addEventListener('click', sendMessage);
-            
-            // Quick reply buttons
-            document.querySelectorAll('.quick-reply').forEach(button => {
-                button.addEventListener('click', function() {
-                    const reply = this.getAttribute('data-reply');
-                    addMessage(reply, 'user');
-                    handleQuickReply(reply);
-                });
-            });
-            
-            // Function to send message
-            function sendMessage() {
-                const message = chatInput.value.trim();
-                if (!message) return;
-                
-                addMessage(message, 'user');
-                chatInput.value = '';
-                chatInput.style.height = 'auto';
-                chatSend.disabled = true;
-                
-                // Show typing indicator
-                showTypingIndicator();
-                
-                // Simulate agent response after delay
-                setTimeout(() => {
-                    hideTypingIndicator();
-                    generateResponse(message);
-                }, 1500 + Math.random() * 2000);
-            }
-            
-            // Function to add message to chat
-            function addMessage(text, sender) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${sender}`;
-                
-                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                messageDiv.innerHTML = `${text}<span class="message-time">${time}</span>`;
-                
-                chatMessages.appendChild(messageDiv);
-                
-                // Scroll to bottom
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-                
-                // If chat is closed and message is from agent, show badge
-                if (sender === 'agent' && !isChatOpen) {
-                    unreadMessages++;
-                    updateBadge();
-                }
-            }
-            
-            // Function to show typing indicator
-            function showTypingIndicator() {
-                isTyping = true;
-                typingIndicator.style.display = 'flex';
-                chatMessages.appendChild(typingIndicator);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-            
-            // Function to hide typing indicator
-            function hideTypingIndicator() {
-                isTyping = false;
-                typingIndicator.style.display = 'none';
-            }
-            
-            // Conversation context memory
-            let conversationContext = {
-                lastTopic: '',
-                userName: '',
-                userEmail: '',
-                trackingNumber: '',
-                serviceType: '',
-                location: '',
-                urgency: '',
-                conversationHistory: []
-            };
-
-            // Enhanced response function with context
-            function generateEnhancedResponse(userMessage) {
-                // Update conversation history
-                conversationContext.conversationHistory.push({
-                    role: 'user',
-                    message: userMessage,
-                    timestamp: new Date().toISOString()
-                });
-                
-                // Check if this is a follow-up question
-                const lastAgentMessage = conversationContext.conversationHistory
-                    .filter(msg => msg.role === 'agent')
-                    .slice(-1)[0];
-                
-                // Extract potential tracking number (TRK- format)
-                const trackingMatch = userMessage.match(/TRK-[A-Z0-9]{8,}/i);
-                if (trackingMatch) {
-                    conversationContext.trackingNumber = trackingMatch[0];
                 }
                 
-                // Extract location mentions
-                const locations = ['lagos', 'abuja', 'port harcourt', 'ibadan', 'kano'];
-                const mentionedLocation = locations.find(loc => userMessage.toLowerCase().includes(loc));
-                if (mentionedLocation) {
-                    conversationContext.location = mentionedLocation;
+                // Function to show typing indicator
+                function showTypingIndicator() {
+                    if (!typingIndicator || !chatMessages) return;
+                    isTyping = true;
+                    typingIndicator.style.display = 'flex';
+                    chatMessages.appendChild(typingIndicator);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
                 
-                // Generate base response
-                const response = generateResponse(userMessage);
-                
-                // Add context-aware followup if relevant
-                if (conversationContext.trackingNumber && userMessage.toLowerCase().includes('track')) {
-                    response.followup += `\n\nI see you mentioned tracking. For tracking number ${conversationContext.trackingNumber}, please visit the tracking page.`;
+                // Function to hide typing indicator
+                function hideTypingIndicator() {
+                    if (!typingIndicator) return;
+                    isTyping = false;
+                    typingIndicator.style.display = 'none';
                 }
                 
-                if (conversationContext.location) {
-                    response.followup += `\n\nFor ${conversationContext.location} deliveries, note that delivery times may vary.`;
-                }
-                
-                // Update context with agent response
-                conversationContext.conversationHistory.push({
-                    role: 'agent',
-                    message: response.main,
-                    timestamp: new Date().toISOString()
-                });
-                
-                return response;
-            }
-
-            // Update the sendMessage function to use enhanced response
-            function sendMessage() {
-                const message = chatInput.value.trim();
-                if (!message) return;
-                
-                addMessage(message, 'user');
-                chatInput.value = '';
-                chatInput.style.height = 'auto';
-                chatSend.disabled = true;
-                
-                // Show typing indicator
-                showTypingIndicator();
-                
-                // Use enhanced response with context
-                setTimeout(() => {
-                    hideTypingIndicator();
-                    generateEnhancedResponse(message);
-                }, 1000 + Math.random() * 1000);
-            }
-
-            // Function to generate automated responses
-            function generateResponse(userMessage) {
-                const lowerMessage = userMessage.toLowerCase();
-                
-                // Create a structured response object
-                const response = {
-                    main: '',
-                    followup: '',
-                    action: '', // URL or action to take
-                    quickReplies: [] // Suggested next questions
+                // Conversation context memory
+                let conversationContext = {
+                    lastTopic: '',
+                    userName: '',
+                    userEmail: '',
+                    trackingNumber: '',
+                    serviceType: '',
+                    location: '',
+                    urgency: '',
+                    conversationHistory: []
                 };
-                
-                // ==================== TRACKING & SHIPMENT STATUS ====================
-                if (lowerMessage.includes('track') || lowerMessage.includes('where is') || 
-                    lowerMessage.includes('status') || lowerMessage.includes('location') ||
-                    lowerMessage.includes('where my') || lowerMessage.includes('shipment') ||
-                    lowerMessage.includes('parcel') || lowerMessage.includes('package') ||
-                    lowerMessage.includes('delivery status') || lowerMessage.includes('order status')) {
-                    
-                    response.main = "I can help you track your shipment! 🚚 Do you have your tracking number handy?";
-                    response.followup = "You can enter it here, or visit our tracking page for detailed updates with maps and estimated delivery times.";
-                    response.action = "{{ url_for('track_delivery_page') }}";
-                    response.quickReplies = ["I have my tracking number", "I lost my tracking number", "How do I get a tracking number?", "Check all my shipments"];
-                    
-                // ==================== BOOKING & DELIVERY ====================
-                } else if (lowerMessage.includes('book') || lowerMessage.includes('schedule') || 
-                        lowerMessage.includes('send') || lowerMessage.includes('deliver') ||
-                        lowerMessage.includes('pickup') || lowerMessage.includes('dispatch') ||
-                        lowerMessage.includes('ship') || lowerMessage.includes('transport') ||
-                        lowerMessage.includes('arrange delivery') || lowerMessage.includes('need to send')) {
-                    
-                    response.main = "Great! I can help you book a delivery. 📦 We offer several options:";
-                    response.followup = "• Express Delivery (Same Day)\n• Standard Delivery (1-2 Days)\n• Freight Services\n• International Shipping\n• Document Delivery";
-                    response.action = "{{ url_for('book_delivery') }}";
-                    response.quickReplies = ["Express delivery", "Get a quote", "Pickup request", "International shipping"];
-                    
-                // ==================== PRICING & QUOTES ====================
-                } else if (lowerMessage.includes('price') || lowerMessage.includes('cost') || 
-                        lowerMessage.includes('rate') || lowerMessage.includes('how much') ||
-                        lowerMessage.includes('fee') || lowerMessage.includes('charge') ||
-                        lowerMessage.includes('quote') || lowerMessage.includes('estimate') ||
-                        lowerMessage.includes('cost to send') || lowerMessage.includes('delivery fee')) {
-                    
-                    response.main = "Our pricing depends on several factors: 📊";
-                    response.followup = "• Package weight & dimensions\n• Distance between locations\n• Service type (Express/Standard)\n• Insurance requirements\n• Special handling needs\n\nYou can get an instant quote on our booking page!";
-                    response.action = "{{ url_for('book_delivery') }}";
-                    response.quickReplies = ["Small package quote", "Large item quote", "Document delivery price", "Same-day delivery cost"];
-                    
-                // ==================== SERVICES & OFFERINGS ====================
-                } else if (lowerMessage.includes('service') || lowerMessage.includes('offer') || 
-                        lowerMessage.includes('provide') || lowerMessage.includes('what do you') ||
-                        lowerMessage.includes('types of') || lowerMessage.includes('kinds of') ||
-                        lowerMessage.includes('can you') || lowerMessage.includes('able to') ||
-                        lowerMessage.includes('do you handle') || lowerMessage.includes('what services')) {
-                    
-                    response.main = "We offer comprehensive logistics solutions: 🏢";
-                    response.followup = "• Express & Standard Delivery\n• Freight & Heavy Goods Transport\n• Warehouse Storage\n• Last-Mile Delivery\n• International Shipping\n• Document Courier\n• Temperature-Controlled Transport\n• E-commerce Fulfillment";
-                    response.action = "{{ url_for('services') }}";
-                    response.quickReplies = ["Express delivery details", "International shipping", "Warehouse services", "E-commerce fulfillment"];
-                    
-                // ==================== OPERATING HOURS ====================
-                } else if (lowerMessage.includes('time') || lowerMessage.includes('hour') || 
-                        lowerMessage.includes('open') || lowerMessage.includes('close') ||
-                        lowerMessage.includes('available') || lowerMessage.includes('operate') ||
-                        lowerMessage.includes('weekend') || lowerMessage.includes('holiday') ||
-                        lowerMessage.includes('business hours') || lowerMessage.includes('working hours')) {
-                    
-                    response.main = "⏰ Our operating hours:";
-                    response.followup = "• Monday-Friday: 7:00 AM - 9:00 PM\n• Saturday: 8:00 AM - 7:00 PM\n• Sunday: 10:00 AM - 5:00 PM\n• 24/7 Emergency Dispatch Available\n• Holidays: Limited service (call ahead)";
-                    response.action = "";
-                    response.quickReplies = ["Weekend delivery", "Emergency dispatch", "Holiday schedule", "24/7 contact"];
-                    
-                // ==================== CONTACT & SUPPORT ====================
-                } else if (lowerMessage.includes('contact') || lowerMessage.includes('call') || 
-                        lowerMessage.includes('phone') || lowerMessage.includes('number') ||
-                        lowerMessage.includes('email') || lowerMessage.includes('support') ||
-                        lowerMessage.includes('speak to') || lowerMessage.includes('talk to') ||
-                        lowerMessage.includes('agent') || lowerMessage.includes('human') ||
-                        lowerMessage.includes('representative') || lowerMessage.includes('customer service')) {
-                    
-                    response.main = "📞 Here's how you can reach us:";
-                    response.followup = "• Phone: +234 801 234 5678 (24/7)\n• WhatsApp: +234 801 234 5678\n• Email: support@majestyxpress.com\n• Office: 123 Logistics Street, Lagos\n• Live Chat: Available now (you're here!)";
-                    response.action = "{{ url_for('whatsapp_dispatch') }}";
-                    response.quickReplies = ["Call customer service", "Email support", "Visit office", "WhatsApp support"];
-                    
-                // ==================== LOCATIONS & COVERAGE ====================
-                } else if (lowerMessage.includes('location') || lowerMessage.includes('where are you') || 
-                        lowerMessage.includes('city') || lowerMessage.includes('state') ||
-                        lowerMessage.includes('country') || lowerMessage.includes('cover') ||
-                        lowerMessage.includes('deliver to') || lowerMessage.includes('service area') ||
-                        lowerMessage.includes('pickup from') || lowerMessage.includes('operate in')) {
-                    
-                    response.main = "📍 We operate across Nigeria with international partnerships:";
-                    response.followup = "• Lagos (All areas)\n• Abuja\n• Port Harcourt\n• Ibadan\n• Kano\n• International: USA, UK, China, UAE\n• Rural areas: Limited coverage (contact for details)";
-                    response.action = "";
-                    response.quickReplies = ["Lagos coverage", "International shipping", "Rural delivery", "State coverage"];
-                    
-                // ==================== DELIVERY TIMES ====================
-                } else if (lowerMessage.includes('how long') || lowerMessage.includes('when will') || 
-                        lowerMessage.includes('delivery time') || lowerMessage.includes('time frame') ||
-                        lowerMessage.includes('duration') || lowerMessage.includes('eta') ||
-                        lowerMessage.includes('estimated') || lowerMessage.includes('arrive') ||
-                        lowerMessage.includes('take to deliver') || lowerMessage.includes('delivery duration')) {
-                    
-                    response.main = "⏱️ Delivery timeframes vary by service:";
-                    response.followup = "• Express Delivery: 2-6 hours (within Lagos)\n• Same Day: Within 12 hours\n• Standard: 1-2 business days\n• International: 3-10 business days\n• Rural Areas: 3-5 business days\n\nNote: Times may vary based on traffic and weather.";
-                    response.action = "";
-                    response.quickReplies = ["Same-day delivery", "International timing", "Rural delivery time", "Express service"];
-                    
-                // ==================== PACKAGE RESTRICTIONS ====================
-                } else if (lowerMessage.includes('can i send') || lowerMessage.includes('allowed to') || 
-                        lowerMessage.includes('prohibited') || lowerMessage.includes('restricted') ||
-                        lowerMessage.includes('not allowed') || lowerMessage.includes('forbidden') ||
-                        lowerMessage.includes('dangerous') || lowerMessage.includes('hazardous') ||
-                        lowerMessage.includes('what can i') || lowerMessage.includes('send food')) {
-                    
-                    response.main = "⚠️ We have guidelines for shipped items:";
-                    response.followup = "✅ **Allowed**: Documents, Electronics, Clothing, Books, Non-perishable goods\n\n❌ **Prohibited**: \n• Illegal items\n• Hazardous materials\n• Perishable food (without special arrangement)\n• Live animals\n• Cash/valuables without insurance\n• Weapons/ammunition";
-                    response.action = "";
-                    response.quickReplies = ["Food delivery options", "Electronics shipping", "Document requirements", "Insurance for valuables"];
-                    
-                // ==================== INSURANCE ====================
-                } else if (lowerMessage.includes('insurance') || lowerMessage.includes('insured') || 
-                        lowerMessage.includes('compensation') || lowerMessage.includes('damage') ||
-                        lowerMessage.includes('lost') || lowerMessage.includes('broken') ||
-                        lowerMessage.includes('claim') || lowerMessage.includes('liability') ||
-                        lowerMessage.includes('what if damaged') || lowerMessage.includes('package protection')) {
-                    
-                    response.main = "🛡️ Package Insurance Information:";
-                    response.followup = "• Basic Coverage: Up to ₦10,000 included\n• Enhanced Insurance: Additional cost (1-5% of declared value)\n• Claims Process: File within 48 hours of delivery\n• Documentation: Photos and proof of value required\n• Exclusions: Improper packaging, prohibited items";
-                    response.action = "";
-                    response.quickReplies = ["Insurance cost", "File a claim", "Declare value", "Coverage limits"];
-                    
-                // ==================== PAYMENT METHODS ====================
-                } else if (lowerMessage.includes('pay') || lowerMessage.includes('payment') || 
-                        lowerMessage.includes('cash') || lowerMessage.includes('card') ||
-                        lowerMessage.includes('transfer') || lowerMessage.includes('bank') ||
-                        lowerMessage.includes('online payment') || lowerMessage.includes('credit') ||
-                        lowerMessage.includes('debit') || lowerMessage.includes('how to pay')) {
-                    
-                    response.main = "💳 Accepted Payment Methods:";
-                    response.followup = "• Cash on Delivery\n• Bank Transfer\n• Credit/Debit Cards\n• Online Payment Gateway\n• USSD (*723*...)\n• PayPal (International)\n• Corporate Billing (For businesses)\n\nNote: Payment options may vary by service type.";
-                    response.action = "";
-                    response.quickReplies = ["COD information", "Online payment", "Corporate account", "International payment"];
-                    
-                // ==================== PACKAGING REQUIREMENTS ====================
-                } else if (lowerMessage.includes('package') || lowerMessage.includes('pack') || 
-                        lowerMessage.includes('box') || lowerMessage.includes('wrap') ||
-                        lowerMessage.includes('label') || lowerMessage.includes('how to pack') ||
-                        lowerMessage.includes('packaging') || lowerMessage.includes('preparing') ||
-                        lowerMessage.includes('secure my') || lowerMessage.includes('proper packaging')) {
-                    
-                    response.main = "📦 Packaging Guidelines:";
-                    response.followup = "1. Use sturdy boxes\n2. Cushion items with bubble wrap\n3. Seal with strong packing tape\n4. Label clearly (sender & receiver)\n5. Include contact numbers\n6. Fragile items: Mark clearly\n7. We offer packaging services for ₦500-₦2000";
-                    response.action = "";
-                    response.quickReplies = ["Packaging service", "Fragile items", "Label requirements", "Box sizes available"];
-                    
-                // ==================== BULK & BUSINESS SERVICES ====================
-                } else if (lowerMessage.includes('bulk') || lowerMessage.includes('multiple') || 
-                        lowerMessage.includes('business') || lowerMessage.includes('corporate') ||
-                        lowerMessage.includes('company') || lowerMessage.includes('enterprise') ||
-                        lowerMessage.includes('wholesale') || lowerMessage.includes('volume') ||
-                        lowerMessage.includes('regular customer') || lowerMessage.includes('discount')) {
-                    
-                    response.main = "🏢 Business & Bulk Shipping Solutions:";
-                    response.followup = "• Volume Discounts (10-30% off)\n• Dedicated Account Manager\n• API Integration Available\n• Scheduled Pickups\n• Consolidated Billing\n• Real-time Tracking Dashboard\n• Custom Reporting\n• Priority Support";
-                    response.action = "{{ url_for('partnership') }}";
-                    response.quickReplies = ["Business account", "Volume discounts", "API integration", "Corporate partnership"];
-                    
-                // ==================== INTERNATIONAL SHIPPING ====================
-                } else if (lowerMessage.includes('international') || lowerMessage.includes('abroad') || 
-                        lowerMessage.includes('overseas') || lowerMessage.includes('country to') ||
-                        lowerMessage.includes('export') || lowerMessage.includes('import') ||
-                        lowerMessage.includes('global') || lowerMessage.includes('worldwide') ||
-                        lowerMessage.includes('ship to usa') || lowerMessage.includes('send to uk')) {
-                    
-                    response.main = "🌍 International Shipping Services:";
-                    response.followup = "• USA & Canada: 3-7 business days\n• UK & Europe: 4-8 business days\n• China & Asia: 5-10 business days\n• Africa: 2-5 business days\n• Required: Customs documentation, ID, item description\n• Restrictions apply by country";
-                    response.action = "";
-                    response.quickReplies = ["USA shipping", "UK shipping", "Customs documents", "International rates"];
-                    
-                // ==================== DOCUMENT DELIVERY ====================
-                } else if (lowerMessage.includes('document') || lowerMessage.includes('paper') || 
-                        lowerMessage.includes('letter') || lowerMessage.includes('envelope') ||
-                        lowerMessage.includes('contract') || lowerMessage.includes('legal') ||
-                        lowerMessage.includes('certificate') || lowerMessage.includes('urgent document')) {
-                    
-                    response.main = "📄 Document Delivery Service:";
-                    response.followup = "• Same-day document delivery\n• Legal document handling\n• Confidentiality guaranteed\n• Proof of delivery\n• Digital copy backup\n• Return receipt service\n• Bulk document shipping";
-                    response.action = "";
-                    response.quickReplies = ["Same-day documents", "Legal documents", "Confidential delivery", "Proof of delivery"];
-                    
-                // ==================== URGENT/EMERGENCY ====================
-                } else if (lowerMessage.includes('urgent') || lowerMessage.includes('emergency') || 
-                        lowerMessage.includes('asap') || lowerMessage.includes('immediate') ||
-                        lowerMessage.includes('right now') || lowerMessage.includes('today') ||
-                        lowerMessage.includes('quick') || lowerMessage.includes('fast') ||
-                        lowerMessage.includes('need it now') || lowerMessage.includes('critical')) {
-                    
-                    response.main = "🚨 Emergency Dispatch Available!";
-                    response.followup = "We can arrange immediate pickup within 30-60 minutes (subject to availability). Additional 50% surcharge applies for emergency services. Call +234 801 234 5678 now for immediate assistance.";
-                    response.action = "{{ url_for('whatsapp_dispatch') }}";
-                    response.quickReplies = ["Emergency pickup", "Urgent delivery cost", "Call now", "Same-day service"];
-                    
-                // ==================== CANCELLATION & REFUNDS ====================
-                } else if (lowerMessage.includes('cancel') || lowerMessage.includes('refund') || 
-                        lowerMessage.includes('return') || lowerMessage.includes('change') ||
-                        lowerMessage.includes('modify') || lowerMessage.includes('reschedule') ||
-                        lowerMessage.includes('stop delivery') || lowerMessage.includes('undo') ||
-                        lowerMessage.includes('wrong address') || lowerMessage.includes('need to cancel')) {
-                    
-                    response.main = "🔄 Cancellation & Modification Policy:";
-                    response.followup = "• Free cancellation before pickup\n• 50% refund after pickup, before transit\n• No refund after transit begins\n• Address changes: ₦500 fee after pickup\n• Rescheduling: Free 24+ hours in advance\n• Contact customer service immediately for changes";
-                    response.action = "";
-                    response.quickReplies = ["Cancel booking", "Change address", "Reschedule", "Refund request"];
-                    
-                // ==================== COMPLAINTS & ISSUES ====================
-                } else if (lowerMessage.includes('complaint') || lowerMessage.includes('problem') || 
-                        lowerMessage.includes('issue') || lowerMessage.includes('wrong') ||
-                        lowerMessage.includes('error') || lowerMessage.includes('mistake') ||
-                        lowerMessage.includes('not happy') || lowerMessage.includes('dissatisfied') ||
-                        lowerMessage.includes('late delivery') || lowerMessage.includes('damaged')) {
-                    
-                    response.main = "😔 I'm sorry to hear you're having an issue.";
-                    response.followup = "Please provide details and your tracking number. Our customer service team will investigate immediately. You can also email complaints@majestyxpress.com or call +234 801 234 5678 ext. 2.";
-                    response.action = "";
-                    response.quickReplies = ["Late delivery complaint", "Damaged package", "Wrong delivery", "Missing item"];
-                    
-                // ==================== THANK YOU & COURTESY ====================
-                } else if (lowerMessage.includes('thank') || lowerMessage.includes('thanks') || 
-                        lowerMessage.includes('appreciate') || lowerMessage.includes('helpful') ||
-                        lowerMessage.includes('good') || lowerMessage.includes('great service') ||
-                        lowerMessage.includes('awesome') || lowerMessage.includes('excellent')) {
-                    
-                    response.main = "You're very welcome! 😊";
-                    response.followup = "Thank you for choosing Majesty Xpress Logistics. Is there anything else I can help you with today?";
-                    response.action = "";
-                    response.quickReplies = ["No, thank you", "Yes, another question", "Leave feedback", "Make a booking"];
-                    
-                // ==================== GREETINGS ====================
-                } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || 
-                        lowerMessage.includes('hey') || lowerMessage.includes('good morning') ||
-                        lowerMessage.includes('good afternoon') || lowerMessage.includes('good evening') ||
-                        lowerMessage.includes('greetings') || lowerMessage.includes('howdy')) {
-                    
-                    const greetings = [
-                        "Hello! 👋 Welcome to Majesty Xpress Logistics. How can I assist you today?",
-                        "Hi there! 🚚 Ready to help with your delivery needs. What can I do for you?",
-                        "Good day! 📦 Welcome to Majesty Xpress. How may I help you today?",
-                        "Greetings! 😊 I'm here to help with tracking, booking, and all logistics services."
-                    ];
-                    response.main = greetings[Math.floor(Math.random() * greetings.length)];
-                    response.followup = "You can ask me about:\n• Tracking shipments\n• Booking deliveries\n• Pricing & quotes\n• Service information\n• Operating hours";
-                    response.action = "";
-                    response.quickReplies = ["Track a package", "Book delivery", "Get a quote", "Service information"];
-                    
-                // ==================== ACCOUNT & LOGIN ====================
-                } else if (lowerMessage.includes('account') || lowerMessage.includes('login') || 
-                        lowerMessage.includes('sign in') || lowerMessage.includes('register') ||
-                        lowerMessage.includes('dashboard') || lowerMessage.includes('profile') ||
-                        lowerMessage.includes('password') || lowerMessage.includes('forgot password') ||
-                        lowerMessage.includes('my account') || lowerMessage.includes('user')) {
-                    
-                    response.main = "👤 Account Management:";
-                    response.followup = "You can manage your account on our website:\n• View all shipments\n• Update profile\n• Save addresses\n• Payment history\n• Bookmark favorite services";
-                    response.action = "{{ url_for('users.login') if not current_user.is_authenticated else url_for('users.dashboard') }}";
-                    response.quickReplies = ["Login help", "Create account", "Reset password", "View dashboard"];
-                    
-                // ==================== WHATSAPP SERVICES ====================
-                } else if (lowerMessage.includes('whatsapp') || lowerMessage.includes('chat') || 
-                        lowerMessage.includes('message') || lowerMessage.includes('text')) {
-                    
-                    response.main = "💬 WhatsApp Services:";
-                    response.followup = "You can book, track, and get support directly on WhatsApp! Send 'Hi' to +234 801 234 5678 for:\n• Instant booking\n• Live tracking updates\n• Photo sharing\n• Quick quotes\n• 24/7 support";
-                    response.action = "{{ url_for('whatsapp_dispatch') }}";
-                    response.quickReplies = ["Book via WhatsApp", "Track via WhatsApp", "WhatsApp support", "Share photo"];
-                    
-                // ==================== PARTNERSHIP & AFFILIATES ====================
-                } else if (lowerMessage.includes('partner') || lowerMessage.includes('affiliate') || 
-                        lowerMessage.includes('collaborat') || lowerMessage.includes('join') ||
-                        lowerMessage.includes('business opportunity') || lowerMessage.includes('franchise') ||
-                        lowerMessage.includes('driver') || lowerMessage.includes('courier') ||
-                        lowerMessage.includes('work with') || lowerMessage.includes('become a')) {
-                    
-                    response.main = "🤝 Partnership Opportunities:";
-                    response.followup = "We welcome partnerships with:\n• Delivery Drivers\n• Logistics Companies\n• E-commerce Stores\n• Corporate Clients\n• International Partners\n• Technology Providers";
-                    response.action = "{{ url_for('partnership') }}";
-                    response.quickReplies = ["Become a driver", "Business partnership", "API integration", "Franchise info"];
-                    
-                // ==================== WEBSITE & APP ====================
-                } else if (lowerMessage.includes('website') || lowerMessage.includes('app') || 
-                        lowerMessage.includes('mobile') || lowerMessage.includes('download') ||
-                        lowerMessage.includes('online') || lowerMessage.includes('portal') ||
-                        lowerMessage.includes('majesty xpress') || lowerMessage.includes('your site')) {
-                    
-                    response.main = "🌐 Website & Mobile Access:";
-                    response.followup = "• Website: www.majestyxpress.com\n• Mobile App: Coming Soon!\n• All services available online\n• Real-time tracking\n• Digital payments\n• Customer portal access";
-                    response.action = "{{ url_for('index') }}";
-                    response.quickReplies = ["Visit website", "Mobile app info", "Browser tracking", "Online booking"];
-                    
-                // ==================== DEFAULT RESPONSE ====================
-                } else {
-                    const defaultResponses = [
-                        "I understand you're asking about: '" + userMessage + "'. Could you provide more details so I can help you better?",
-                        "I'd be happy to assist with that! Could you clarify your question about logistics or delivery services?",
-                        "For specific assistance, please contact our support team at support@majestyxpress.com or call +234 801 234 5678.",
-                        "I can help you with tracking, booking, pricing, service information, or general inquiries. What specific information do you need?",
-                        "Let me connect you with the right information. Are you asking about delivery services, tracking, pricing, or something else?",
-                        "I'm here to help with all things logistics! Could you rephrase your question or choose from these options?"
-                    ];
-                    
-                    response.main = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
-                    response.followup = "Try asking about:\n• 'Track my package'\n• 'Book a delivery'\n• 'Get a quote'\n• 'Service hours'\n• 'International shipping'";
-                    response.action = "";
-                    response.quickReplies = ["Track shipment", "Book delivery", "Service info", "Contact support"];
-                }
-                
-                // Send the main response
-                addMessage(response.main, 'agent');
-                
-                // Send followup with a delay for better conversation flow
-                if (response.followup) {
-                    setTimeout(() => {
-                        addMessage(response.followup, 'agent');
-                        
-                        // Add action link if available
-                        if (response.action) {
-                            setTimeout(() => {
-                                const linkText = response.action.includes('track') ? "📦 Track your shipment" :
-                                                response.action.includes('book') ? "🚚 Book a delivery now" :
-                                                response.action.includes('services') ? "🔗 View our services" :
-                                                response.action.includes('whatsapp') ? "💬 Open WhatsApp" :
-                                                response.action.includes('login') ? "👤 Go to login" :
-                                                response.action.includes('partnership') ? "🤝 Partnership application" :
-                                                "🔗 Click here for more information";
-                                
-                                addMessage(`<a href="${response.action}" style="color: #667eea; text-decoration: underline; font-weight: 600;">${linkText}</a>`, 'agent');
-                            }, 300);
-                        }
-                        
-                        // Update quick replies
-                        updateQuickReplies(response.quickReplies);
-                        
-                    }, 800);
-                }
-                
-                return response;
-            }
 
-            // Function to update quick reply buttons
-            function updateQuickReplies(replies) {
-                const quickRepliesContainer = document.getElementById('quickReplies');
-                if (!quickRepliesContainer) return;
-                
-                // Clear existing quick replies (except permanent ones)
-                quickRepliesContainer.innerHTML = '';
-                
-                // Add new quick replies
-                replies.forEach(reply => {
-                    const button = document.createElement('button');
-                    button.className = 'quick-reply';
-                    button.textContent = reply;
-                    button.setAttribute('data-reply', reply);
-                    
-                    button.addEventListener('click', function() {
-                        const replyText = this.getAttribute('data-reply');
-                        addMessage(replyText, 'user');
-                        handleQuickReply(replyText);
+                // Enhanced response function with context
+                function generateEnhancedResponse(userMessage) {
+                    // Update conversation history
+                    conversationContext.conversationHistory.push({
+                        role: 'user',
+                        message: userMessage,
+                        timestamp: new Date().toISOString()
                     });
                     
-                    quickRepliesContainer.appendChild(button);
-                });
-                
-                // Add permanent quick replies
-                const permanentReplies = ['Speak with agent', 'Main menu', 'Contact support'];
-                permanentReplies.forEach(reply => {
-                    const button = document.createElement('button');
-                    button.className = 'quick-reply permanent';
-                    button.textContent = reply;
-                    button.setAttribute('data-reply', reply);
+                    // Check if this is a follow-up question
+                    const lastAgentMessage = conversationContext.conversationHistory
+                        .filter(msg => msg.role === 'agent')
+                        .slice(-1)[0];
                     
-                    button.addEventListener('click', function() {
-                        const replyText = this.getAttribute('data-reply');
-                        addMessage(replyText, 'user');
-                        
-                        if (replyText === 'Speak with agent') {
-                            addMessage("Connecting you with a live agent... Please hold.", 'agent');
-                            setTimeout(() => {
-                                addMessage("All agents are currently busy. You can call +234 801 234 5678 for immediate assistance or email support@majestyxpress.com.", 'agent');
-                            }, 2000);
-                        } else if (replyText === 'Main menu') {
-                            addMessage("Returning to main menu. How can I help you?", 'agent');
-                            updateQuickReplies(['Track shipment', 'Book delivery', 'Get quote', 'Service info']);
-                        } else if (replyText === 'Contact support') {
-                            addMessage("Contact options:\n📞 Phone: +234 801 234 5678\n📧 Email: support@majestyxpress.com\n💬 WhatsApp: +234 801 234 5678\n🏢 Office: 123 Logistics Street, Lagos", 'agent');
-                        }
-                    });
-                    
-                    quickRepliesContainer.appendChild(button);
-                });
-            }
-
-            // Enhanced quick reply handler
-            function handleQuickReply(reply) {
-                // Hide quick replies temporarily
-                const quickRepliesContainer = document.getElementById('quickReplies');
-                if (quickRepliesContainer) {
-                    quickRepliesContainer.style.display = 'none';
-                }
-                
-                // Show typing indicator
-                showTypingIndicator();
-                
-                // Process based on quick reply
-                setTimeout(() => {
-                    hideTypingIndicator();
-                    
-                    // Generate appropriate response
-                    generateResponse(reply);
-                    
-                    // Show quick replies again after response
-                    setTimeout(() => {
-                        if (quickRepliesContainer) {
-                            quickRepliesContainer.style.display = 'flex';
-                        }
-                    }, 1000);
-                }, 1000 + Math.random() * 1000);
-            }
-
-            // Function to handle quick replies
-            function handleQuickReply(reply) {
-                // Hide quick replies after selection
-                quickReplies.style.display = 'none';
-                
-                // Show typing indicator
-                showTypingIndicator();
-                
-                // Generate response after delay
-                setTimeout(() => {
-                    hideTypingIndicator();
-                    generateResponse(reply);
-                    
-                    // Show quick replies again after response
-                    setTimeout(() => {
-                        quickReplies.style.display = 'flex';
-                    }, 1000);
-                }, 1000);
-            }
-            
-            // Function to update badge
-            function updateBadge() {
-                if (unreadMessages > 0) {
-                    chatBadge.textContent = unreadMessages;
-                    chatBadge.style.display = 'flex';
-                } else {
-                    chatBadge.style.display = 'none';
-                }
-            }
-            
-            // Auto-open chat after 30 seconds on homepage
-            if (window.location.pathname === '/' || window.location.pathname === '') {
-                setTimeout(() => {
-                    if (!isChatOpen && unreadMessages === 0) {
-                        addMessage("Hi there! Need help with logistics or delivery? I'm here to assist you.", 'agent');
-                        unreadMessages = 1;
-                        updateBadge();
+                    // Extract potential tracking number (TRK- format)
+                    const trackingMatch = userMessage.match(/TRK-[A-Z0-9]{8,}/i);
+                    if (trackingMatch) {
+                        conversationContext.trackingNumber = trackingMatch[0];
                     }
-                }, 30000);
-            }
-            
-            // Close chat when clicking outside on mobile
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768 && isChatOpen && 
-                    !chatContainer.contains(e.target) && 
-                    !chatToggle.contains(e.target)) {
-                    isChatOpen = false;
-                    chatToggle.classList.remove('active');
-                    chatContainer.classList.remove('active');
-                    chatToggle.setAttribute('aria-expanded', 'false');
+                    
+                    // Extract location mentions
+                    const locations = ['lagos', 'abuja', 'port harcourt', 'ibadan', 'kano'];
+                    const mentionedLocation = locations.find(loc => userMessage.toLowerCase().includes(loc));
+                    if (mentionedLocation) {
+                        conversationContext.location = mentionedLocation;
+                    }
+                    
+                    // Generate base response
+                    const response = generateResponse(userMessage);
+                    
+                    // Add context-aware followup if relevant
+                    if (conversationContext.trackingNumber && userMessage.toLowerCase().includes('track')) {
+                        response.followup += `\n\nI see you mentioned tracking. For tracking number ${conversationContext.trackingNumber}, please visit the tracking page.`;
+                    }
+                    
+                    if (conversationContext.location) {
+                        response.followup += `\n\nFor ${conversationContext.location} deliveries, note that delivery times may vary.`;
+                    }
+                    
+                    // Update context with agent response
+                    conversationContext.conversationHistory.push({
+                        role: 'agent',
+                        message: response.main,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Send the main response
+                    addMessage(response.main, 'agent');
+                    
+                    // Send followup with a delay for better conversation flow
+                    if (response.followup) {
+                        setTimeout(() => {
+                            addMessage(response.followup, 'agent');
+                            
+                            // Add action link if available
+                            if (response.action) {
+                                setTimeout(() => {
+                                    const linkText = response.action.includes('track') ? "📦 Track your shipment" :
+                                                    response.action.includes('book') ? "🚚 Book a delivery now" :
+                                                    response.action.includes('services') ? "🔗 View our services" :
+                                                    response.action.includes('whatsapp') ? "💬 Open WhatsApp" :
+                                                    response.action.includes('login') ? "👤 Go to login" :
+                                                    response.action.includes('partnership') ? "🤝 Partnership application" :
+                                                    "🔗 Click here for more information";
+                                    
+                                    addMessage(`<a href="${response.action}" style="color: #667eea; text-decoration: underline; font-weight: 600;">${linkText}</a>`, 'agent');
+                                }, 300);
+                            }
+                            
+                            // Update quick replies
+                            updateQuickReplies(response.quickReplies);
+                            
+                        }, 800);
+                    }
+                    
+                    return response;
                 }
-            });
-            
-            // Initialize chat input height
-            chatInput.style.height = 'auto';
-            chatSend.disabled = true;
+
+                // Function to generate automated responses
+                function generateResponse(userMessage) {
+                    const lowerMessage = userMessage.toLowerCase();
+                    
+                    // Create a structured response object
+                    const response = {
+                        main: '',
+                        followup: '',
+                        action: '', // URL or action to take
+                        quickReplies: [] // Suggested next questions
+                    };
+                    
+                    // ==================== TRACKING & SHIPMENT STATUS ====================
+                    if (lowerMessage.includes('track') || lowerMessage.includes('where is') || 
+                        lowerMessage.includes('status') || lowerMessage.includes('location') ||
+                        lowerMessage.includes('where my') || lowerMessage.includes('shipment') ||
+                        lowerMessage.includes('parcel') || lowerMessage.includes('package') ||
+                        lowerMessage.includes('delivery status') || lowerMessage.includes('order status')) {
+                        
+                        response.main = "I can help you track your shipment! 🚚 Do you have your tracking number handy?";
+                        response.followup = "You can enter it here, or visit our tracking page for detailed updates with maps and estimated delivery times.";
+                        response.action = "{{ url_for('track_delivery_page') }}";
+                        response.quickReplies = ["I have my tracking number", "I lost my tracking number", "How do I get a tracking number?", "Check all my shipments"];
+                        
+                    // ==================== BOOKING & DELIVERY ====================
+                    } else if (lowerMessage.includes('book') || lowerMessage.includes('schedule') || 
+                            lowerMessage.includes('send') || lowerMessage.includes('deliver') ||
+                            lowerMessage.includes('pickup') || lowerMessage.includes('dispatch') ||
+                            lowerMessage.includes('ship') || lowerMessage.includes('transport') ||
+                            lowerMessage.includes('arrange delivery') || lowerMessage.includes('need to send')) {
+                        
+                        response.main = "Great! I can help you book a delivery. 📦 We offer several options:";
+                        response.followup = "• Express Delivery (Same Day)\n• Standard Delivery (1-2 Days)\n• Freight Services\n• International Shipping\n• Document Delivery";
+                        response.action = "{{ url_for('book_delivery') }}";
+                        response.quickReplies = ["Express delivery", "Get a quote", "Pickup request", "International shipping"];
+                        
+                    // ==================== PRICING & QUOTES ====================
+                    } else if (lowerMessage.includes('price') || lowerMessage.includes('cost') || 
+                            lowerMessage.includes('rate') || lowerMessage.includes('how much') ||
+                            lowerMessage.includes('fee') || lowerMessage.includes('charge') ||
+                            lowerMessage.includes('quote') || lowerMessage.includes('estimate') ||
+                            lowerMessage.includes('cost to send') || lowerMessage.includes('delivery fee')) {
+                        
+                        response.main = "Our pricing depends on several factors: 📊";
+                        response.followup = "• Package weight & dimensions\n• Distance between locations\n• Service type (Express/Standard)\n• Insurance requirements\n• Special handling needs\n\nYou can get an instant quote on our booking page!";
+                        response.action = "{{ url_for('book_delivery') }}";
+                        response.quickReplies = ["Small package quote", "Large item quote", "Document delivery price", "Same-day delivery cost"];
+                        
+                    // ==================== SERVICES & OFFERINGS ====================
+                    } else if (lowerMessage.includes('service') || lowerMessage.includes('offer') || 
+                            lowerMessage.includes('provide') || lowerMessage.includes('what do you') ||
+                            lowerMessage.includes('types of') || lowerMessage.includes('kinds of') ||
+                            lowerMessage.includes('can you') || lowerMessage.includes('able to') ||
+                            lowerMessage.includes('do you handle') || lowerMessage.includes('what services')) {
+                        
+                        response.main = "We offer comprehensive logistics solutions: 🏢";
+                        response.followup = "• Express & Standard Delivery\n• Freight & Heavy Goods Transport\n• Warehouse Storage\n• Last-Mile Delivery\n• International Shipping\n• Document Courier\n• Temperature-Controlled Transport\n• E-commerce Fulfillment";
+                        response.action = "{{ url_for('services') }}";
+                        response.quickReplies = ["Express delivery details", "International shipping", "Warehouse services", "E-commerce fulfillment"];
+                        
+                    // ==================== OPERATING HOURS ====================
+                    } else if (lowerMessage.includes('time') || lowerMessage.includes('hour') || 
+                            lowerMessage.includes('open') || lowerMessage.includes('close') ||
+                            lowerMessage.includes('available') || lowerMessage.includes('operate') ||
+                            lowerMessage.includes('weekend') || lowerMessage.includes('holiday') ||
+                            lowerMessage.includes('business hours') || lowerMessage.includes('working hours')) {
+                        
+                        response.main = "⏰ Our operating hours:";
+                        response.followup = "• Monday-Friday: 7:00 AM - 9:00 PM\n• Saturday: 8:00 AM - 7:00 PM\n• Sunday: 10:00 AM - 5:00 PM\n• 24/7 Emergency Dispatch Available\n• Holidays: Limited service (call ahead)";
+                        response.action = "";
+                        response.quickReplies = ["Weekend delivery", "Emergency dispatch", "Holiday schedule", "24/7 contact"];
+                        
+                    // ==================== CONTACT & SUPPORT ====================
+                    } else if (lowerMessage.includes('contact') || lowerMessage.includes('call') || 
+                            lowerMessage.includes('phone') || lowerMessage.includes('number') ||
+                            lowerMessage.includes('email') || lowerMessage.includes('support') ||
+                            lowerMessage.includes('speak to') || lowerMessage.includes('talk to') ||
+                            lowerMessage.includes('agent') || lowerMessage.includes('human') ||
+                            lowerMessage.includes('representative') || lowerMessage.includes('customer service')) {
+                        
+                        response.main = "📞 Here's how you can reach us:";
+                        response.followup = "• Phone: +234 801 234 5678 (24/7)\n• WhatsApp: +234 801 234 5678\n• Email: support@majestyxpress.com\n• Office: 123 Logistics Street, Lagos\n• Live Chat: Available now (you're here!)";
+                        response.action = "{{ url_for('whatsapp_dispatch') }}";
+                        response.quickReplies = ["Call customer service", "Email support", "Visit office", "WhatsApp support"];
+                        
+                    // ==================== LOCATIONS & COVERAGE ====================
+                    } else if (lowerMessage.includes('location') || lowerMessage.includes('where are you') || 
+                            lowerMessage.includes('city') || lowerMessage.includes('state') ||
+                            lowerMessage.includes('country') || lowerMessage.includes('cover') ||
+                            lowerMessage.includes('deliver to') || lowerMessage.includes('service area') ||
+                            lowerMessage.includes('pickup from') || lowerMessage.includes('operate in')) {
+                        
+                        response.main = "📍 We operate across Nigeria with international partnerships:";
+                        response.followup = "• Lagos (All areas)\n• Abuja\n• Port Harcourt\n• Ibadan\n• Kano\n• International: USA, UK, China, UAE\n• Rural areas: Limited coverage (contact for details)";
+                        response.action = "";
+                        response.quickReplies = ["Lagos coverage", "International shipping", "Rural delivery", "State coverage"];
+                        
+                    // ==================== DELIVERY TIMES ====================
+                    } else if (lowerMessage.includes('how long') || lowerMessage.includes('when will') || 
+                            lowerMessage.includes('delivery time') || lowerMessage.includes('time frame') ||
+                            lowerMessage.includes('duration') || lowerMessage.includes('eta') ||
+                            lowerMessage.includes('estimated') || lowerMessage.includes('arrive') ||
+                            lowerMessage.includes('take to deliver') || lowerMessage.includes('delivery duration')) {
+                        
+                        response.main = "⏱️ Delivery timeframes vary by service:";
+                        response.followup = "• Express Delivery: 2-6 hours (within Lagos)\n• Same Day: Within 12 hours\n• Standard: 1-2 business days\n• International: 3-10 business days\n• Rural Areas: 3-5 business days\n\nNote: Times may vary based on traffic and weather.";
+                        response.action = "";
+                        response.quickReplies = ["Same-day delivery", "International timing", "Rural delivery time", "Express service"];
+                        
+                    // ==================== PACKAGE RESTRICTIONS ====================
+                    } else if (lowerMessage.includes('can i send') || lowerMessage.includes('allowed to') || 
+                            lowerMessage.includes('prohibited') || lowerMessage.includes('restricted') ||
+                            lowerMessage.includes('not allowed') || lowerMessage.includes('forbidden') ||
+                            lowerMessage.includes('dangerous') || lowerMessage.includes('hazardous') ||
+                            lowerMessage.includes('what can i') || lowerMessage.includes('send food')) {
+                        
+                        response.main = "⚠️ We have guidelines for shipped items:";
+                        response.followup = "✅ **Allowed**: Documents, Electronics, Clothing, Books, Non-perishable goods\n\n❌ **Prohibited**: \n• Illegal items\n• Hazardous materials\n• Perishable food (without special arrangement)\n• Live animals\n• Cash/valuables without insurance\n• Weapons/ammunition";
+                        response.action = "";
+                        response.quickReplies = ["Food delivery options", "Electronics shipping", "Document requirements", "Insurance for valuables"];
+                        
+                    // ==================== INSURANCE ====================
+                    } else if (lowerMessage.includes('insurance') || lowerMessage.includes('insured') || 
+                            lowerMessage.includes('compensation') || lowerMessage.includes('damage') ||
+                            lowerMessage.includes('lost') || lowerMessage.includes('broken') ||
+                            lowerMessage.includes('claim') || lowerMessage.includes('liability') ||
+                            lowerMessage.includes('what if damaged') || lowerMessage.includes('package protection')) {
+                        
+                        response.main = "🛡️ Package Insurance Information:";
+                        response.followup = "• Basic Coverage: Up to ₦10,000 included\n• Enhanced Insurance: Additional cost (1-5% of declared value)\n• Claims Process: File within 48 hours of delivery\n• Documentation: Photos and proof of value required\n• Exclusions: Improper packaging, prohibited items";
+                        response.action = "";
+                        response.quickReplies = ["Insurance cost", "File a claim", "Declare value", "Coverage limits"];
+                        
+                    // ==================== PAYMENT METHODS ====================
+                    } else if (lowerMessage.includes('pay') || lowerMessage.includes('payment') || 
+                            lowerMessage.includes('cash') || lowerMessage.includes('card') ||
+                            lowerMessage.includes('transfer') || lowerMessage.includes('bank') ||
+                            lowerMessage.includes('online payment') || lowerMessage.includes('credit') ||
+                            lowerMessage.includes('debit') || lowerMessage.includes('how to pay')) {
+                        
+                        response.main = "💳 Accepted Payment Methods:";
+                        response.followup = "• Cash on Delivery\n• Bank Transfer\n• Credit/Debit Cards\n• Online Payment Gateway\n• USSD (*723*...)\n• PayPal (International)\n• Corporate Billing (For businesses)\n\nNote: Payment options may vary by service type.";
+                        response.action = "";
+                        response.quickReplies = ["COD information", "Online payment", "Corporate account", "International payment"];
+                        
+                    // ==================== PACKAGING REQUIREMENTS ====================
+                    } else if (lowerMessage.includes('package') || lowerMessage.includes('pack') || 
+                            lowerMessage.includes('box') || lowerMessage.includes('wrap') ||
+                            lowerMessage.includes('label') || lowerMessage.includes('how to pack') ||
+                            lowerMessage.includes('packaging') || lowerMessage.includes('preparing') ||
+                            lowerMessage.includes('secure my') || lowerMessage.includes('proper packaging')) {
+                        
+                        response.main = "📦 Packaging Guidelines:";
+                        response.followup = "1. Use sturdy boxes\n2. Cushion items with bubble wrap\n3. Seal with strong packing tape\n4. Label clearly (sender & receiver)\n5. Include contact numbers\n6. Fragile items: Mark clearly\n7. We offer packaging services for ₦500-₦2000";
+                        response.action = "";
+                        response.quickReplies = ["Packaging service", "Fragile items", "Label requirements", "Box sizes available"];
+                        
+                    // ==================== BULK & BUSINESS SERVICES ====================
+                    } else if (lowerMessage.includes('bulk') || lowerMessage.includes('multiple') || 
+                            lowerMessage.includes('business') || lowerMessage.includes('corporate') ||
+                            lowerMessage.includes('company') || lowerMessage.includes('enterprise') ||
+                            lowerMessage.includes('wholesale') || lowerMessage.includes('volume') ||
+                            lowerMessage.includes('regular customer') || lowerMessage.includes('discount')) {
+                        
+                        response.main = "🏢 Business & Bulk Shipping Solutions:";
+                        response.followup = "• Volume Discounts (10-30% off)\n• Dedicated Account Manager\n• API Integration Available\n• Scheduled Pickups\n• Consolidated Billing\n• Real-time Tracking Dashboard\n• Custom Reporting\n• Priority Support";
+                        response.action = "{{ url_for('partnership') }}";
+                        response.quickReplies = ["Business account", "Volume discounts", "API integration", "Corporate partnership"];
+                        
+                    // ==================== INTERNATIONAL SHIPPING ====================
+                    } else if (lowerMessage.includes('international') || lowerMessage.includes('abroad') || 
+                            lowerMessage.includes('overseas') || lowerMessage.includes('country to') ||
+                            lowerMessage.includes('export') || lowerMessage.includes('import') ||
+                            lowerMessage.includes('global') || lowerMessage.includes('worldwide') ||
+                            lowerMessage.includes('ship to usa') || lowerMessage.includes('send to uk')) {
+                        
+                        response.main = "🌍 International Shipping Services:";
+                        response.followup = "• USA & Canada: 3-7 business days\n• UK & Europe: 4-8 business days\n• China & Asia: 5-10 business days\n• Africa: 2-5 business days\n• Required: Customs documentation, ID, item description\n• Restrictions apply by country";
+                        response.action = "";
+                        response.quickReplies = ["USA shipping", "UK shipping", "Customs documents", "International rates"];
+                        
+                    // ==================== DOCUMENT DELIVERY ====================
+                    } else if (lowerMessage.includes('document') || lowerMessage.includes('paper') || 
+                            lowerMessage.includes('letter') || lowerMessage.includes('envelope') ||
+                            lowerMessage.includes('contract') || lowerMessage.includes('legal') ||
+                            lowerMessage.includes('certificate') || lowerMessage.includes('urgent document')) {
+                        
+                        response.main = "📄 Document Delivery Service:";
+                        response.followup = "• Same-day document delivery\n• Legal document handling\n• Confidentiality guaranteed\n• Proof of delivery\n• Digital copy backup\n• Return receipt service\n• Bulk document shipping";
+                        response.action = "";
+                        response.quickReplies = ["Same-day documents", "Legal documents", "Confidential delivery", "Proof of delivery"];
+                        
+                    // ==================== URGENT/EMERGENCY ====================
+                    } else if (lowerMessage.includes('urgent') || lowerMessage.includes('emergency') || 
+                            lowerMessage.includes('asap') || lowerMessage.includes('immediate') ||
+                            lowerMessage.includes('right now') || lowerMessage.includes('today') ||
+                            lowerMessage.includes('quick') || lowerMessage.includes('fast') ||
+                            lowerMessage.includes('need it now') || lowerMessage.includes('critical')) {
+                        
+                        response.main = "🚨 Emergency Dispatch Available!";
+                        response.followup = "We can arrange immediate pickup within 30-60 minutes (subject to availability). Additional 50% surcharge applies for emergency services. Call +234 801 234 5678 now for immediate assistance.";
+                        response.action = "{{ url_for('whatsapp_dispatch') }}";
+                        response.quickReplies = ["Emergency pickup", "Urgent delivery cost", "Call now", "Same-day service"];
+                        
+                    // ==================== CANCELLATION & REFUNDS ====================
+                    } else if (lowerMessage.includes('cancel') || lowerMessage.includes('refund') || 
+                            lowerMessage.includes('return') || lowerMessage.includes('change') ||
+                            lowerMessage.includes('modify') || lowerMessage.includes('reschedule') ||
+                            lowerMessage.includes('stop delivery') || lowerMessage.includes('undo') ||
+                            lowerMessage.includes('wrong address') || lowerMessage.includes('need to cancel')) {
+                        
+                        response.main = "🔄 Cancellation & Modification Policy:";
+                        response.followup = "• Free cancellation before pickup\n• 50% refund after pickup, before transit\n• No refund after transit begins\n• Address changes: ₦500 fee after pickup\n• Rescheduling: Free 24+ hours in advance\n• Contact customer service immediately for changes";
+                        response.action = "";
+                        response.quickReplies = ["Cancel booking", "Change address", "Reschedule", "Refund request"];
+                        
+                    // ==================== COMPLAINTS & ISSUES ====================
+                    } else if (lowerMessage.includes('complaint') || lowerMessage.includes('problem') || 
+                            lowerMessage.includes('issue') || lowerMessage.includes('wrong') ||
+                            lowerMessage.includes('error') || lowerMessage.includes('mistake') ||
+                            lowerMessage.includes('not happy') || lowerMessage.includes('dissatisfied') ||
+                            lowerMessage.includes('late delivery') || lowerMessage.includes('damaged')) {
+                        
+                        response.main = "😔 I'm sorry to hear you're having an issue.";
+                        response.followup = "Please provide details and your tracking number. Our customer service team will investigate immediately. You can also email complaints@majestyxpress.com or call +234 801 234 5678 ext. 2.";
+                        response.action = "";
+                        response.quickReplies = ["Late delivery complaint", "Damaged package", "Wrong delivery", "Missing item"];
+                        
+                    // ==================== THANK YOU & COURTESY ====================
+                    } else if (lowerMessage.includes('thank') || lowerMessage.includes('thanks') || 
+                            lowerMessage.includes('appreciate') || lowerMessage.includes('helpful') ||
+                            lowerMessage.includes('good') || lowerMessage.includes('great service') ||
+                            lowerMessage.includes('awesome') || lowerMessage.includes('excellent')) {
+                        
+                        response.main = "You're very welcome! 😊";
+                        response.followup = "Thank you for choosing Majesty Xpress Logistics. Is there anything else I can help you with today?";
+                        response.action = "";
+                        response.quickReplies = ["No, thank you", "Yes, another question", "Leave feedback", "Make a booking"];
+                        
+                    // ==================== GREETINGS ====================
+                    } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || 
+                            lowerMessage.includes('hey') || lowerMessage.includes('good morning') ||
+                            lowerMessage.includes('good afternoon') || lowerMessage.includes('good evening') ||
+                            lowerMessage.includes('greetings') || lowerMessage.includes('howdy')) {
+                        
+                        const greetings = [
+                            "Hello! 👋 Welcome to Majesty Xpress Logistics. How can I assist you today?",
+                            "Hi there! 🚚 Ready to help with your delivery needs. What can I do for you?",
+                            "Good day! 📦 Welcome to Majesty Xpress. How may I help you today?",
+                            "Greetings! 😊 I'm here to help with tracking, booking, and all logistics services."
+                        ];
+                        response.main = greetings[Math.floor(Math.random() * greetings.length)];
+                        response.followup = "You can ask me about:\n• Tracking shipments\n• Booking deliveries\n• Pricing & quotes\n• Service information\n• Operating hours";
+                        response.action = "";
+                        response.quickReplies = ["Track a package", "Book delivery", "Get a quote", "Service information"];
+                        
+                    // ==================== ACCOUNT & LOGIN ====================
+                    } else if (lowerMessage.includes('account') || lowerMessage.includes('login') || 
+                            lowerMessage.includes('sign in') || lowerMessage.includes('register') ||
+                            lowerMessage.includes('dashboard') || lowerMessage.includes('profile') ||
+                            lowerMessage.includes('password') || lowerMessage.includes('forgot password') ||
+                            lowerMessage.includes('my account') || lowerMessage.includes('user')) {
+                        
+                        response.main = "👤 Account Management:";
+                        response.followup = "You can manage your account on our website:\n• View all shipments\n• Update profile\n• Save addresses\n• Payment history\n• Bookmark favorite services";
+                        response.action = "{{ url_for('users.login') if not current_user.is_authenticated else url_for('users.dashboard') }}";
+                        response.quickReplies = ["Login help", "Create account", "Reset password", "View dashboard"];
+                        
+                    // ==================== WHATSAPP SERVICES ====================
+                    } else if (lowerMessage.includes('whatsapp') || lowerMessage.includes('chat') || 
+                            lowerMessage.includes('message') || lowerMessage.includes('text')) {
+                        
+                        response.main = "💬 WhatsApp Services:";
+                        response.followup = "You can book, track, and get support directly on WhatsApp! Send 'Hi' to +234 801 234 5678 for:\n• Instant booking\n• Live tracking updates\n• Photo sharing\n• Quick quotes\n• 24/7 support";
+                        response.action = "{{ url_for('whatsapp_dispatch') }}";
+                        response.quickReplies = ["Book via WhatsApp", "Track via WhatsApp", "WhatsApp support", "Share photo"];
+                        
+                    // ==================== PARTNERSHIP & AFFILIATES ====================
+                    } else if (lowerMessage.includes('partner') || lowerMessage.includes('affiliate') || 
+                            lowerMessage.includes('collaborat') || lowerMessage.includes('join') ||
+                            lowerMessage.includes('business opportunity') || lowerMessage.includes('franchise') ||
+                            lowerMessage.includes('driver') || lowerMessage.includes('courier') ||
+                            lowerMessage.includes('work with') || lowerMessage.includes('become a')) {
+                        
+                        response.main = "🤝 Partnership Opportunities:";
+                        response.followup = "We welcome partnerships with:\n• Delivery Drivers\n• Logistics Companies\n• E-commerce Stores\n• Corporate Clients\n• International Partners\n• Technology Providers";
+                        response.action = "{{ url_for('partnership') }}";
+                        response.quickReplies = ["Become a driver", "Business partnership", "API integration", "Franchise info"];
+                        
+                    // ==================== WEBSITE & APP ====================
+                    } else if (lowerMessage.includes('website') || lowerMessage.includes('app') || 
+                            lowerMessage.includes('mobile') || lowerMessage.includes('download') ||
+                            lowerMessage.includes('online') || lowerMessage.includes('portal') ||
+                            lowerMessage.includes('majesty xpress') || lowerMessage.includes('your site')) {
+                        
+                        response.main = "🌐 Website & Mobile Access:";
+                        response.followup = "• Website: www.majestyxpress.com\n• Mobile App: Coming Soon!\n• All services available online\n• Real-time tracking\n• Digital payments\n• Customer portal access";
+                        response.action = "{{ url_for('index') }}";
+                        response.quickReplies = ["Visit website", "Mobile app info", "Browser tracking", "Online booking"];
+                        
+                    // ==================== DEFAULT RESPONSE ====================
+                    } else {
+                        const defaultResponses = [
+                            "I understand you're asking about: '" + userMessage + "'. Could you provide more details so I can help you better?",
+                            "I'd be happy to assist with that! Could you clarify your question about logistics or delivery services?",
+                            "For specific assistance, please contact our support team at support@majestyxpress.com or call +234 801 234 5678.",
+                            "I can help you with tracking, booking, pricing, service information, or general inquiries. What specific information do you need?",
+                            "Let me connect you with the right information. Are you asking about delivery services, tracking, pricing, or something else?",
+                            "I'm here to help with all things logistics! Could you rephrase your question or choose from these options?"
+                        ];
+                        
+                        response.main = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+                        response.followup = "Try asking about:\n• 'Track my package'\n• 'Book a delivery'\n• 'Get a quote'\n• 'Service hours'\n• 'International shipping'";
+                        response.action = "";
+                        response.quickReplies = ["Track shipment", "Book delivery", "Service info", "Contact support"];
+                    }
+                    
+                    return response;
+                }
+
+                // Function to update quick reply buttons
+                function updateQuickReplies(replies) {
+                    const quickRepliesContainer = document.getElementById('quickReplies');
+                    if (!quickRepliesContainer) return;
+                    
+                    // Clear existing quick replies (except permanent ones)
+                    quickRepliesContainer.innerHTML = '';
+                    
+                    // Add new quick replies
+                    replies.forEach(reply => {
+                        const button = document.createElement('button');
+                        button.className = 'quick-reply';
+                        button.textContent = reply;
+                        button.setAttribute('data-reply', reply);
+                        
+                        button.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const replyText = this.getAttribute('data-reply');
+                            addMessage(replyText, 'user');
+                            handleQuickReply(replyText);
+                        });
+                        
+                        quickRepliesContainer.appendChild(button);
+                    });
+                    
+                    // Add permanent quick replies
+                    const permanentReplies = ['Speak with agent', 'Main menu', 'Contact support'];
+                    permanentReplies.forEach(reply => {
+                        const button = document.createElement('button');
+                        button.className = 'quick-reply permanent';
+                        button.textContent = reply;
+                        button.setAttribute('data-reply', reply);
+                        
+                        button.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const replyText = this.getAttribute('data-reply');
+                            addMessage(replyText, 'user');
+                            
+                            if (replyText === 'Speak with agent') {
+                                addMessage("Connecting you with a live agent... Please hold.", 'agent');
+                                setTimeout(() => {
+                                    addMessage("All agents are currently busy. You can call +234 801 234 5678 for immediate assistance or email support@majestyxpress.com.", 'agent');
+                                }, 2000);
+                            } else if (replyText === 'Main menu') {
+                                addMessage("Returning to main menu. How can I help you?", 'agent');
+                                updateQuickReplies(['Track shipment', 'Book delivery', 'Get quote', 'Service info']);
+                            } else if (replyText === 'Contact support') {
+                                addMessage("Contact options:\n📞 Phone: +234 801 234 5678\n📧 Email: support@majestyxpress.com\n💬 WhatsApp: +234 801 234 5678\n🏢 Office: 123 Logistics Street, Lagos", 'agent');
+                            }
+                        });
+                        
+                        quickRepliesContainer.appendChild(button);
+                    });
+                }
+
+                // Enhanced quick reply handler
+                function handleQuickReply(reply) {
+                    // Hide quick replies temporarily
+                    const quickRepliesContainer = document.getElementById('quickReplies');
+                    if (quickRepliesContainer) {
+                        quickRepliesContainer.style.display = 'none';
+                    }
+                    
+                    // Show typing indicator
+                    showTypingIndicator();
+                    
+                    // Process based on quick reply
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        
+                        // Generate appropriate response
+                        generateEnhancedResponse(reply);
+                        
+                        // Show quick replies again after response
+                        setTimeout(() => {
+                            if (quickRepliesContainer) {
+                                quickRepliesContainer.style.display = 'flex';
+                            }
+                        }, 1000);
+                    }, 1000 + Math.random() * 1000);
+                }
+
+                // Function to handle quick replies
+                function handleQuickReply(reply) {
+                    // Hide quick replies after selection
+                    if (quickReplies) quickReplies.style.display = 'none';
+                    
+                    // Show typing indicator
+                    showTypingIndicator();
+                    
+                    // Generate response after delay
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        generateEnhancedResponse(reply);
+                        
+                        // Show quick replies again after response
+                        setTimeout(() => {
+                            if (quickReplies) quickReplies.style.display = 'flex';
+                        }, 1000);
+                    }, 1000);
+                }
+                
+                // Function to update badge
+                function updateBadge() {
+                    if (!chatBadge) return;
+                    if (unreadMessages > 0) {
+                        chatBadge.textContent = unreadMessages;
+                        chatBadge.style.display = 'flex';
+                    } else {
+                        chatBadge.style.display = 'none';
+                    }
+                }
+                
+                // Auto-open chat after 30 seconds on homepage
+                if (window.location.pathname === '/' || window.location.pathname === '') {
+                    setTimeout(() => {
+                        if (!isChatOpen && unreadMessages === 0) {
+                            addMessage("Hi there! Need help with logistics or delivery? I'm here to assist you.", 'agent');
+                            unreadMessages = 1;
+                            updateBadge();
+                        }
+                    }, 30000);
+                }
+                
+                // Close chat when clicking outside on mobile
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768 && isChatOpen && 
+                        !chatContainer.contains(e.target) && 
+                        !chatToggle.contains(e.target)) {
+                        isChatOpen = false;
+                        chatToggle.classList.remove('active');
+                        chatContainer.classList.remove('active');
+                        chatToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                
+                // Initialize chat input height
+                if (chatInput) {
+                    chatInput.style.height = 'auto';
+                }
+                if (chatSend) {
+                    chatSend.disabled = true;
+                }
+            } else {
+                console.log('Chat elements not found, skipping chat initialization');
+            }
         });
     </script>
     
