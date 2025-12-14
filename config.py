@@ -9,8 +9,8 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
     # Database 
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL").replace("postgres://", "postgresql://") or 'sqlite:///logistics.db'
-    #SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") or 'sqlite:///logistics.db'
+    #SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL").replace("postgres://", "postgresql://") or 'sqlite:///logistics.db'
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") or 'sqlite:///logistics.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Debug

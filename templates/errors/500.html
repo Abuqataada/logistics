@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - Majesty Xpress{% endblock %}
+
+{% block content %}
+<style>
+    .error-container {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .error-code {
+        font-size: clamp(6rem, 15vw, 10rem);
+        font-weight: 800;
+        color: #EF4444;
+        line-height: 1;
+        margin-bottom: 1rem;
+        text-shadow: 4px 4px 0 #FEE2E2;
+    }
+    
+    .error-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        animation: shake 0.5s ease-in-out infinite;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .error-title {
+        font-size: clamp(1.5rem, 4vw, 2rem);
+        color: #1E293B;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .error-message {
+        font-size: 1.1rem;
+        color: #64748B;
+        max-width: 500px;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #2A5BD7, #1E4BBB);
+        color: white;
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(42, 91, 215, 0.3);
+        color: white;
+    }
+    
+    .btn-secondary {
+        background: #F1F5F9;
+        color: #475569;
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+        background: #E2E8F0;
+        color: #1E293B;
+    }
+    
+    .support-info {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        background: #FEF2F2;
+        border-radius: 12px;
+        border: 1px solid #FECACA;
+        max-width: 400px;
+    }
+    
+    .support-info h3 {
+        font-size: 1rem;
+        color: #991B1B;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .support-info p {
+        font-size: 0.9rem;
+        color: #B91C1C;
+        margin: 0;
+    }
+    
+    .support-info a {
+        color: #991B1B;
+        font-weight: 600;
+    }
+</style>
+
+<div class="error-container">
+    <div class="error-icon">🔧⚠️</div>
+    <div class="error-code">500</div>
+    <h1 class="error-title">Something Went Wrong</h1>
+    <p class="error-message">
+        Our delivery truck hit a bump! We're working on fixing this issue. 
+        Please try again in a few moments.
+    </p>
+    
+    <div class="error-actions">
+        <a href="{{ url_for('index') }}" class="btn-primary">
+            <i class="fas fa-home"></i> Go Home
+        </a>
+        <a href="javascript:location.reload()" class="btn-secondary">
+            <i class="fas fa-redo"></i> Try Again
+        </a>
+    </div>
+    
+    <div class="support-info">
+        <h3><i class="fas fa-headset"></i> Need Help?</h3>
+        <p>
+            If the problem persists, contact our support team via 
+            <a href="{{ url_for('whatsapp_dispatch') }}">WhatsApp</a> or call us.
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,13 +1,13 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from app import db
+from extensions import db
 from models import User, Booking, Address, TrackingUpdate
 import re
 from datetime import datetime
 
-bp = Blueprint('users', __name__)
+ubp = Blueprint('users', __name__)
 
-@bp.route('/register', methods=['GET', 'POST'])
+@ubp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         try:
@@ -47,7 +47,7 @@ def register():
     
     return render_template('users/register.html')
 
-@bp.route('/login', methods=['GET', 'POST'])
+@ubp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         try:
@@ -78,14 +78,14 @@ def login():
     
     return render_template('users/login.html')
 
-@bp.route('/logout')
+@ubp.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash('You have been logged out', 'info')
     return redirect(url_for('index'))
 
-@bp.route('/dashboard')
+@ubp.route('/dashboard')
 @login_required
 def dashboard():
     # Get user's bookings
@@ -111,7 +111,7 @@ def dashboard():
                          delivered_count=delivered_count,
                          addresses_count=addresses_count)
 
-@bp.route('/profile', methods=['GET', 'POST'])
+@ubp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
     if request.method == 'POST':
@@ -134,7 +134,7 @@ def profile():
     
     return render_template('users/profile.html')
 
-@bp.route('/addresses', methods=['GET', 'POST'])
+@ubp.route('/addresses', methods=['GET', 'POST'])
 @login_required
 def addresses():
     if request.method == 'POST':
@@ -177,7 +177,7 @@ def addresses():
     addresses = Address.query.filter_by(user_id=current_user.id).all()
     return render_template('users/addresses.html', addresses=addresses)
 
-@bp.route('/bookings')
+@ubp.route('/bookings')
 @login_required
 def bookings():
     page = request.args.get('page', 1, type=int)
@@ -189,7 +189,7 @@ def bookings():
     
     return render_template('users/bookings.html', bookings=bookings)
 
-@bp.route('/booking/<booking_id>')
+@ubp.route('/booking/<booking_id>')
 @login_required
 def booking_detail(booking_id):
     booking = Booking.query.get(booking_id)

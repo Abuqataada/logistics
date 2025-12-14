@@ -3,16 +3,19 @@ from extensions import db, mail
 from models import Booking, TrackingUpdate, Partnership, PricingConfig
 from flask_mail import Message
 from flask import render_template, current_app, jsonify, request
-import datetime
+from datetime import datetime, timedelta, timezone  # Fixed: proper datetime imports
 import requests
 import json
 import logging
+import secrets  # Moved to top-level import
 from geopy.distance import geodesic
 import time
+
 
 class BookingService:
     def __init__(self, app):
         self.app = app
+        self.logger = app.logger  # Fixed: Store logger for use outside request context
         self.twilio_client = None
         if app.config.get('TWILIO_ACCOUNT_SID'):
             self.twilio_client = Client(
@@ -29,6 +32,13 @@ class BookingService:
         self.rate_limit_counter = 0
         self.last_api_call = 0
     
+    def _get_logger(self):
+        """Get appropriate logger - handles both request and non-request contexts"""
+        try:
+            return current_app.logger
+        except RuntimeError:
+            return self.logger
+    
     def _check_rate_limit(self):
         """Simple rate limiting for API calls"""
         current_time = time.time()
@@ -40,6 +50,8 @@ class BookingService:
         """Geocode address using Distance Matrix AI Geocoding API"""
         if not self.geocoding_api_key or not address:
             return None
+        
+        logger = self._get_logger()
         
         try:
             self._check_rate_limit()
@@ -61,8 +73,8 @@ class BookingService:
                 # Extract address components
                 address_components = {}
                 for component in result.get('address_components', []):
-                    for type_name in component['types']:
-                        address_components[type_name] = component['long_name']
+                    for type_name in component.get('types', []):  # Fixed: added .get() for safety
+                        address_components[type_name] = component.get('long_name', '')
                 
                 return {
                     'latitude': location['lat'],
@@ -73,20 +85,22 @@ class BookingService:
                     'location_type': result['geometry'].get('location_type', 'APPROXIMATE')
                 }
             
-            current_app.logger.warning(f"Geocoding failed for '{address}': {data.get('status')}")
+            logger.warning(f"Geocoding failed for '{address}': {data.get('status')}")
             return None
             
         except requests.exceptions.RequestException as e:
-            current_app.logger.error(f"Geocoding API request failed: {str(e)}")
+            logger.error(f"Geocoding API request failed: {str(e)}")
             return None
         except Exception as e:
-            current_app.logger.error(f"Geocoding failed for '{address}': {str(e)}")
+            logger.error(f"Geocoding failed for '{address}': {str(e)}")
             return None
     
     def calculate_distance_matrix(self, origin, destination, mode="driving"):
         """Calculate distance using Distance Matrix AI API"""
         if not self.distance_matrix_api_key or not origin or not destination:
             return None
+        
+        logger = self._get_logger()
         
         try:
             self._check_rate_limit()
@@ -96,7 +110,7 @@ class BookingService:
             destination_geocode = self.geocode_address(destination)
             
             if not origin_geocode or not destination_geocode:
-                current_app.logger.error("Failed to geocode addresses")
+                logger.error("Failed to geocode addresses")
                 return None
             
             # Build API URL with coordinates
@@ -119,9 +133,15 @@ class BookingService:
             
             if data.get('status') == 'OK' and data.get('rows'):
                 row = data['rows'][0]
-                element = row['elements'][0]
+                elements = row.get('elements', [])
                 
-                if element['status'] == 'OK':
+                if not elements:  # Fixed: Check if elements exist
+                    logger.warning("No elements in distance matrix response")
+                    return None
+                    
+                element = elements[0]
+                
+                if element.get('status') == 'OK':  # Fixed: use .get() for safety
                     # Extract distance and duration
                     distance_meters = element['distance']['value']
                     distance_km = distance_meters / 1000
@@ -131,8 +151,8 @@ class BookingService:
                     duration_text = element['duration']['text']
                     
                     # Get address texts
-                    origin_address = data.get('origin_addresses', [origin])[0]
-                    destination_address = data.get('destination_addresses', [destination])[0]
+                    origin_address = data.get('origin_addresses', [origin])[0] if data.get('origin_addresses') else origin
+                    destination_address = data.get('destination_addresses', [destination])[0] if data.get('destination_addresses') else destination
                     
                     # Calculate straight-line distance for reference
                     origin_coords = (origin_geocode['latitude'], origin_geocode['longitude'])
@@ -171,15 +191,17 @@ class BookingService:
                         },
                         'mode': mode
                     }
+                else:
+                    logger.warning(f"Element status not OK: {element.get('status')}")
             
-            current_app.logger.warning(f"Distance Matrix API returned error: {data.get('status')}")
+            logger.warning(f"Distance Matrix API returned error: {data.get('status')}")
             return None
                 
         except requests.exceptions.RequestException as e:
-            current_app.logger.error(f"Distance Matrix API request failed: {str(e)}")
+            logger.error(f"Distance Matrix API request failed: {str(e)}")
             return None
         except Exception as e:
-            current_app.logger.error(f"Distance calculation failed: {str(e)}")
+            logger.error(f"Distance calculation failed: {str(e)}")
             return None
     
     def calculate_final_price(self, distance_data, weight, package_value, service_type, 
@@ -226,11 +248,10 @@ class BookingService:
     
     def create_booking(self, data):
         """Create a new booking with distance-based pricing"""
-        from datetime import datetime, timedelta
+        # Fixed: Removed redundant local import, using top-level imports now
         
         # Generate booking ID
-        import secrets
-        booking_id = f"BOOK-{datetime.now(datetime.timezone.utc).strftime('%Y%m%d')}-{secrets.token_hex(4).upper()}"
+        booking_id = f"BOOK-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{secrets.token_hex(4).upper()}"
         
         # Get pricing configuration
         pricing_config = PricingConfig.get_current()
@@ -260,7 +281,14 @@ class BookingService:
             amount = pricing_config.minimum_price
         
         # Calculate estimated delivery date
-        pickup_date = datetime.fromisoformat(data['pickup_date'])
+        # Fixed: Handle both string and datetime objects for pickup_date
+        pickup_date_raw = data.get('pickup_date')
+        if isinstance(pickup_date_raw, str):
+            pickup_date = datetime.fromisoformat(pickup_date_raw.replace('Z', '+00:00'))
+        elif isinstance(pickup_date_raw, datetime):
+            pickup_date = pickup_date_raw
+        else:
+            pickup_date = datetime.now(timezone.utc)
         
         # Get duration from distance data if available
         if distance_data and 'duration_seconds' in distance_data:
@@ -281,7 +309,7 @@ class BookingService:
         booking = Booking(
             id=booking_id,
             user_id=data.get('user_id'),
-            package_type=data['package_type'],
+            package_type=data.get('package_type', 'standard'),  # Fixed: added default
             weight=weight,
             dimensions=data.get('dimensions'),
             package_value=package_value,
@@ -310,16 +338,28 @@ class BookingService:
         db.session.add(booking)
         db.session.commit()
         
-        # Send notifications
-        self.send_booking_confirmation(booking)
-        self.send_whatsapp_notification(booking)
+        # Send notifications (with error handling)
+        try:
+            self.send_booking_confirmation(booking)
+        except Exception as e:
+            self._get_logger().error(f"Failed to send booking confirmation: {str(e)}")
+        
+        try:
+            self.send_whatsapp_notification(booking)
+        except Exception as e:
+            self._get_logger().error(f"Failed to send WhatsApp notification: {str(e)}")
         
         return booking
     
     def send_whatsapp_notification(self, booking):
         """Send WhatsApp notification"""
         if not self.twilio_client:
-            return
+            return None
+        
+        # Fixed: Check if user and phone exist before sending
+        if not booking.user or not booking.user.phone:
+            self._get_logger().warning(f"Cannot send WhatsApp for booking {booking.id}: no user phone")
+            return None
         
         try:
             message = self.twilio_client.messages.create(
@@ -327,37 +367,52 @@ class BookingService:
                      f"Tracking number: {booking.tracking_number}. "
                      f"Est. delivery: {booking.estimated_delivery.strftime('%Y-%m-%d')}",
                 from_=f"whatsapp:{self.app.config['TWILIO_PHONE_NUMBER']}",
-                to=f"whatsapp:{booking.user.phone}" if booking.user and booking.user.phone else None
+                to=f"whatsapp:{booking.user.phone}"
             )
             return message.sid
         except Exception as e:
-            self.app.logger.error(f"WhatsApp notification failed: {str(e)}")
+            self._get_logger().error(f"WhatsApp notification failed: {str(e)}")
+            return None
     
     def send_booking_confirmation(self, booking):
         """Send email confirmation"""
         if not self.app.config.get('MAIL_USERNAME'):
-            return
+            return None
+        
+        # Fixed: Check if user and email exist
+        if not booking.user or not booking.user.email:
+            self._get_logger().warning(f"Cannot send email for booking {booking.id}: no user email")
+            return None
         
         msg = Message(
             subject=f"Booking Confirmation #{booking.id}",
-            recipients=[booking.user.email] if booking.user else [],
+            recipients=[booking.user.email],
             sender=self.app.config['MAIL_USERNAME']
         )
         
-        msg.html = render_template('emails/booking_confirmation.html', 
-                                  booking=booking)
-        
         try:
+            msg.html = render_template('emails/booking_confirmation.html', 
+                                      booking=booking)
             mail.send(msg)
+            return True
         except Exception as e:
-            self.app.logger.error(f"Email sending failed: {str(e)}")
+            self._get_logger().error(f"Email sending failed: {str(e)}")
+            return None
     
     def send_partnership_notification(self, partnership):
         """Notify admin about partnership application"""
+        admin_email = self.app.config.get('ADMIN_EMAIL')
+        mail_username = self.app.config.get('MAIL_USERNAME')
+        
+        # Fixed: Check if admin email and mail config exist
+        if not admin_email or not mail_username:
+            self._get_logger().warning("Cannot send partnership notification: missing email config")
+            return None
+        
         msg = Message(
             subject=f"New Partnership Application - {partnership.company_name}",
-            recipients=[self.app.config.get('ADMIN_EMAIL', '')],
-            sender=self.app.config['MAIL_USERNAME']
+            recipients=[admin_email],
+            sender=mail_username
         )
         
         msg.body = f"""
@@ -373,8 +428,10 @@ class BookingService:
         
         try:
             mail.send(msg)
+            return True
         except Exception as e:
-            self.app.logger.error(f"Partnership notification failed: {str(e)}")
+            self._get_logger().error(f"Partnership notification failed: {str(e)}")
+            return None
     
     def update_tracking(self, booking_id, location, status, description):
         """Add tracking update"""
@@ -390,12 +447,58 @@ class BookingService:
         )
         
         booking.status = status
-        booking.updated_at = datetime.now(datetime.timezone.utc)
+        booking.updated_at = datetime.now(timezone.utc)  # Fixed: proper datetime usage
         
         db.session.add(update)
         db.session.commit()
         
         # Send status update notification
-        self.send_status_update(booking, status)
+        try:
+            self.send_status_update(booking, status)
+        except Exception as e:
+            self._get_logger().error(f"Failed to send status update: {str(e)}")
         
         return update
+    
+    # Fixed: Added missing send_status_update method
+    def send_status_update(self, booking, status):
+        """Send status update notification to user"""
+        if not booking.user:
+            return None
+        
+        # Send email notification
+        if booking.user.email and self.app.config.get('MAIL_USERNAME'):
+            try:
+                msg = Message(
+                    subject=f"Booking #{booking.id} Status Update: {status}",
+                    recipients=[booking.user.email],
+                    sender=self.app.config['MAIL_USERNAME']
+                )
+                
+                msg.body = f"""
+                Your booking status has been updated.
+                
+                Booking ID: {booking.id}
+                Tracking Number: {booking.tracking_number}
+                New Status: {status}
+                
+                Track your package at: {self.app.config.get('APP_URL', '')}/track/{booking.tracking_number}
+                """
+                
+                mail.send(msg)
+            except Exception as e:
+                self._get_logger().error(f"Status update email failed: {str(e)}")
+        
+        # Send WhatsApp notification
+        if self.twilio_client and booking.user.phone:
+            try:
+                self.twilio_client.messages.create(
+                    body=f"Booking #{booking.id} update: Status changed to {status}. "
+                         f"Track: {booking.tracking_number}",
+                    from_=f"whatsapp:{self.app.config['TWILIO_PHONE_NUMBER']}",
+                    to=f"whatsapp:{booking.user.phone}"
+                )
+            except Exception as e:
+                self._get_logger().error(f"Status update WhatsApp failed: {str(e)}")
+        
+        return True

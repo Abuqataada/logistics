@@ -5,7 +5,7 @@ from extensions import db, admin
 from models import User, Booking, Partnership, Payment, TrackingUpdate
 from datetime import datetime, timedelta
 
-bp = Blueprint('admin_routes', __name__)
+abp = Blueprint('admin_routes', __name__)
 
 # Admin model views
 class AdminModelView(ModelView):
@@ -24,7 +24,7 @@ def setup_admin(app):
     admin.add_view(AdminModelView(Payment, db.session))
     admin.add_view(AdminModelView(TrackingUpdate, db.session))
 
-@bp.route('/dashboard')
+@abp.route('/dashboard')
 @login_required
 def dashboard():
     if not current_user.is_admin:
@@ -55,7 +55,7 @@ def dashboard():
                          stats=stats,
                          recent_bookings=recent_bookings)
 
-@bp.route('/bookings/manage')
+@abp.route('/bookings/manage')
 @login_required
 def manage_bookings():
     if not current_user.is_admin:
@@ -76,7 +76,7 @@ def manage_bookings():
                          bookings=bookings,
                          status_filter=status_filter)
 
-@bp.route('/booking/<booking_id>/update-status', methods=['POST'])
+@abp.route('/booking/<booking_id>/update-status', methods=['POST'])
 @login_required
 def update_booking_status(booking_id):
     if not current_user.is_admin:
@@ -109,7 +109,7 @@ def update_booking_status(booking_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@bp.route('/partnerships')
+@abp.route('/partnerships')
 @login_required
 def partnerships():
     if not current_user.is_admin:
@@ -130,7 +130,7 @@ def partnerships():
                          partnerships=partnerships,
                          status_filter=status_filter)
 
-@bp.route('/partnership/<int:id>/update', methods=['POST'])
+@abp.route('/partnership/<int:id>/update', methods=['POST'])
 @login_required
 def update_partnership(id):
     if not current_user.is_admin:
